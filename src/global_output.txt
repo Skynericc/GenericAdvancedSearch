@@ -1,0 +1,3000 @@
+
+C:\Users\Abderrahman\Desktop\new_legal_ai\Froentend_BO\DocSearchFrontEnd\src\index.html
+
+
+<!doctype html>
+<!-- <html lang="en"> -->
+<html lang="ar" dir="rtl"></html>
+<head>
+  <meta charset="utf-8">
+  <title>OpenLaw</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <app-root></app-root>
+</body>
+</html>
+
+
+######
+
+C:\Users\Abderrahman\Desktop\new_legal_ai\Froentend_BO\DocSearchFrontEnd\src\main.ts
+
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+
+import { AppModule } from './app/app.module';
+
+
+platformBrowserDynamic().bootstrapModule(AppModule)
+  .catch(err => console.error(err));
+
+
+######
+
+C:\Users\Abderrahman\Desktop\new_legal_ai\Froentend_BO\DocSearchFrontEnd\src\app\app-routing.module.ts
+
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { SearchComponent } from './components/search/search.component';
+import { AdminComponent } from './components/admin/admin.component';
+
+const routes: Routes = [
+  { path: '', redirectTo: '/search', pathMatch: 'full' }, // default page
+  { path: 'search', component: SearchComponent },
+  { path: 'admin', component: AdminComponent },
+
+  // optional: fallback
+  { path: '**', redirectTo: '/search' }
+];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+})
+export class AppRoutingModule { }
+
+######
+
+C:\Users\Abderrahman\Desktop\new_legal_ai\Froentend_BO\DocSearchFrontEnd\src\app\app.component.html
+
+<div class="title-wrapper" *ngIf="showTitle">
+  <h1 class="page-title">
+    <i class="bi bi-journal-text text-primary"></i>
+    البحث في النصوص القانونية
+  </h1>
+</div>
+
+<router-outlet></router-outlet>
+
+######
+
+C:\Users\Abderrahman\Desktop\new_legal_ai\Froentend_BO\DocSearchFrontEnd\src\app\app.component.spec.ts
+
+
+import { TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
+import { AppComponent } from './app.component';
+
+describe('AppComponent', () => {
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [
+        RouterTestingModule
+      ],
+      declarations: [
+        AppComponent
+      ],
+    }).compileComponents();
+  });
+
+  it('should create the app', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    expect(app).toBeTruthy();
+  });
+
+  it(`should have as title 'doc_search'`, () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    expect(app.title).toEqual('doc_search');
+  });
+
+  it('should render title', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('.content span')?.textContent).toContain('doc_search app is running!');
+  });
+});
+
+
+
+######
+
+C:\Users\Abderrahman\Desktop\new_legal_ai\Froentend_BO\DocSearchFrontEnd\src\app\app.component.ts
+
+
+import { Component } from '@angular/core';
+import { Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent {
+  showTitle = true;
+
+  constructor(private router: Router) {
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe((event: any) => {
+        // Hide title if route is /chatbot
+        this.showTitle = !event.urlAfterRedirects.startsWith('/chatbot');
+      });
+  }
+}
+
+
+######
+
+C:\Users\Abderrahman\Desktop\new_legal_ai\Froentend_BO\DocSearchFrontEnd\src\app\app.module.ts
+
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { DataViewModule } from 'primeng/dataview';
+import { SearchComponent } from './components/search/search.component';
+import { FormsModule } from '@angular/forms';
+
+import { HighlightPipe } from './pipes/highlight.pipe';
+import { HighlightComponent } from './components/highlight/highlight.component';
+import { DescriptionDialogComponent } from './components/description-dialog/description-dialog.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+
+import { HttpClientModule } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
+
+// Angular Material
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSelectModule } from '@angular/material/select';
+import { MatCardModule } from '@angular/material/card';
+
+// ✅ NEW (needed by Admin UI)
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatTableModule } from '@angular/material/table';   // ✅ ADD THIS
+
+import { CalendarModule } from 'primeng/calendar';
+import { InputTextModule } from 'primeng/inputtext';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { DropdownModule } from 'primeng/dropdown';
+import { ChipsModule } from 'primeng/chips';
+import { CheckboxModule } from 'primeng/checkbox';
+import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
+import { PdfViewerComponent } from './components/pdf-viewer/pdf-viewer.component';
+
+// ✅ Admin page
+import { AdminComponent } from './components/admin/admin.component';
+import { AutoCompleteModule } from 'primeng/autocomplete';
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    SearchComponent,
+    HighlightPipe,
+    HighlightComponent,
+    DescriptionDialogComponent,
+    PdfViewerComponent,
+    AdminComponent
+  ],
+  imports: [
+    BrowserModule,
+    FormsModule,
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    DataViewModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatCardModule,
+    HttpClientModule,
+    MatIconModule,
+    CommonModule,
+    NgxExtendedPdfViewerModule,
+
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatSelectModule,
+    MatCardModule,
+
+    // ✅ NEW
+    MatSnackBarModule,
+    MatProgressBarModule,
+    MatTooltipModule,
+    MatTableModule, // ✅ ADD THIS
+
+    CalendarModule,
+    InputTextModule,
+    MultiSelectModule,
+    DropdownModule,
+    ChipsModule,
+    CheckboxModule,
+	AutoCompleteModule
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+
+######
+
+C:\Users\Abderrahman\Desktop\new_legal_ai\Froentend_BO\DocSearchFrontEnd\src\app\components\admin\admin.component.html
+
+<div class="admin-page">
+  <div class="topbar">
+    <div class="topbar-title">
+      <mat-icon class="shield">admin_panel_settings</mat-icon>
+      <div class="title-text">
+        <div class="title-main">لوحة إدارة الوثائق القانونية</div>
+      </div>
+    </div>
+
+    <div class="topbar-actions">
+      <button mat-stroked-button color="primary" class="back-btn" (click)="backToSearch()">
+        <mat-icon>arrow_back</mat-icon>
+        الرجوع للبحث
+      </button>
+    </div>
+  </div>
+
+  <div class="grid">
+    <mat-card class="card upload-card">
+      <mat-card-header>
+        <mat-card-title>رفع ملفات قانونية PDF</mat-card-title>
+        <mat-card-subtitle>الامتداد المدعوم حاليًا: PDF فقط</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div
+          class="dropzone"
+          [class.dragging]="dragging"
+          (dragover)="onDragOver($event)"
+          (dragleave)="onDragLeave($event)"
+          (drop)="onDrop($event)">
+          <div class="dz-inner">
+            <mat-icon class="dz-icon">cloud_upload</mat-icon>
+            <div class="dz-text">
+              <div class="dz-main">اسحب ملفات PDF هنا أو اخترها من جهازك</div>
+              <div class="dz-sub">يتم قبول الرفع، لكن الإدماج التلقائي للبيانات غير مفعّل حالياً.</div>
+            </div>
+
+            <div class="dz-actions">
+              <input #picker type="file" multiple accept=".pdf" hidden (change)="onFilesPicked($event)" />
+
+              <button mat-raised-button color="primary" (click)="onBrowseFiles(picker)" [disabled]="isProcessing">
+                <mat-icon>attach_file</mat-icon>
+                اختيار ملفات
+              </button>
+
+              <button mat-stroked-button color="warn" (click)="clearAll()" [disabled]="!selected.length || isProcessing">
+                <mat-icon>delete_sweep</mat-icon>
+                تفريغ
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="selected-files" *ngIf="selected.length">
+          <div class="selected-header">
+            <mat-icon>picture_as_pdf</mat-icon>
+            <span>الملفات المختارة ({{ selected.length }})</span>
+          </div>
+
+          <div class="selected-list">
+            <div class="selected-item" *ngFor="let item of selected; let i = index">
+              <div class="file-info">
+                <span class="file-name">{{ item.name }}</span>
+                <span class="file-size">{{ item.sizeLabel }}</span>
+              </div>
+
+              <button
+                mat-icon-button
+                color="warn"
+                (click)="remove(i)"
+                [disabled]="isProcessing"
+                matTooltip="إزالة">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="process-section">
+          <div class="process-header">
+            <mat-icon>settings_suggest</mat-icon>
+            <span>بعد اختيار الملفات، اضغط لرفعها</span>
+          </div>
+
+          <button
+            mat-raised-button
+            color="primary"
+            class="process-btn"
+            (click)="process()"
+            [disabled]="!selected.length || isProcessing">
+            <mat-icon>upload_file</mat-icon>
+            رفع الملفات
+          </button>
+
+          <div class="progress" *ngIf="isProcessing">
+            <div class="progress-text">جارٍ التواصل مع الخادم...</div>
+
+            <div class="doc-progress" *ngIf="progressDocs.length">
+              <div class="doc-row" *ngFor="let d of progressDocs">
+                <div class="doc-title">
+                  <mat-icon *ngIf="d.status==='done'">check_circle</mat-icon>
+                  <mat-icon *ngIf="d.status==='failed'">error</mat-icon>
+                  <mat-icon *ngIf="d.status==='processing'">autorenew</mat-icon>
+                  <mat-icon *ngIf="d.status==='queued'">hourglass_empty</mat-icon>
+
+                  <span class="doc-name">{{ d.name }}</span>
+                </div>
+
+                <mat-progress-bar
+                  [mode]="d.status==='queued' ? 'indeterminate' : 'determinate'"
+                  [value]="d.percent">
+                </mat-progress-bar>
+
+                <div class="doc-msg">{{ d.message }}</div>
+              </div>
+            </div>
+
+            <div *ngIf="!progressDocs.length">
+              <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            </div>
+          </div>
+
+          <div class="server-message success" *ngIf="doneMessage">
+            <mat-icon>verified</mat-icon>
+            <span>{{ doneMessage }}</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+
+	
+  </div>
+</div>
+
+######
+
+C:\Users\Abderrahman\Desktop\new_legal_ai\Froentend_BO\DocSearchFrontEnd\src\app\components\admin\admin.component.spec.ts
+
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { AdminComponent } from './admin.component';
+
+describe('AdminComponent', () => {
+  let component: AdminComponent;
+  let fixture: ComponentFixture<AdminComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [ AdminComponent ]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(AdminComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+######
+
+C:\Users\Abderrahman\Desktop\new_legal_ai\Froentend_BO\DocSearchFrontEnd\src\app\components\admin\admin.component.ts
+
+import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { AdminService } from 'src/app/services/admin.service';
+
+type UploadItem = {
+  file: File;
+  name: string;
+  sizeLabel: string;
+  ext: string;
+};
+
+type DocProgress = {
+  doc_key: string;
+  name: string;
+  rel_path?: string;
+  status: 'queued' | 'processing' | 'done' | 'failed';
+  percent: number;
+  current_page: number;
+  total_pages: number;
+  message?: string;
+};
+
+@Component({
+  selector: 'app-admin',
+  templateUrl: './admin.component.html',
+  styleUrls: ['./admin.component.css']
+})
+export class AdminComponent implements OnInit, OnDestroy {
+  dragging = false;
+  isProcessing = false;
+
+  selected: UploadItem[] = [];
+  doneMessage: string | null = null;
+
+  allowedExt = ['pdf'];
+
+  jobId: string | null = null;
+  progressDocs: DocProgress[] = [];
+  private es?: EventSource;
+
+  constructor(
+    private router: Router,
+    private snack: MatSnackBar,
+    private adminService: AdminService,
+    private zone: NgZone
+  ) {}
+
+  ngOnInit(): void {}
+
+  ngOnDestroy(): void {
+    this.closeStream();
+  }
+
+  private closeStream(): void {
+    if (this.es) {
+      this.es.close();
+      this.es = undefined;
+    }
+  }
+
+  backToSearch(): void {
+    this.router.navigate(['/search']);
+  }
+
+  onBrowseFiles(input: HTMLInputElement): void {
+    input.click();
+  }
+
+  onFilesPicked(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const files = input.files;
+
+    if (files && files.length) {
+      this.addFiles(Array.from(files));
+    }
+
+    input.value = '';
+  }
+
+  onDragOver(e: DragEvent): void {
+    e.preventDefault();
+    e.stopPropagation();
+    this.dragging = true;
+  }
+
+  onDragLeave(e: DragEvent): void {
+    e.preventDefault();
+    e.stopPropagation();
+    this.dragging = false;
+  }
+
+  onDrop(e: DragEvent): void {
+    e.preventDefault();
+    e.stopPropagation();
+    this.dragging = false;
+
+    const files = e.dataTransfer?.files;
+    if (files && files.length) {
+      this.addFiles(Array.from(files));
+    }
+  }
+
+  remove(i: number): void {
+    this.selected.splice(i, 1);
+    this.doneMessage = null;
+  }
+
+  clearAll(): void {
+    this.selected = [];
+    this.doneMessage = null;
+  }
+
+  private addFiles(files: File[]): void {
+    const added: UploadItem[] = [];
+    const rejected: string[] = [];
+
+    for (const f of files) {
+      const ext = (f.name.split('.').pop() || '').toLowerCase();
+
+      if (!this.allowedExt.includes(ext)) {
+        rejected.push(f.name);
+        continue;
+      }
+
+      const dup = this.selected.some(x => x.name === f.name && x.file.size === f.size);
+      if (dup) continue;
+
+      added.push({
+        file: f,
+        name: f.name,
+        ext,
+        sizeLabel: this.formatBytes(f.size)
+      });
+    }
+
+    if (rejected.length) {
+      this.snack.open(
+        `تم تجاهل ملفات غير مدعومة: ${rejected.slice(0, 3).join('، ')}${rejected.length > 3 ? ' ...' : ''}`,
+        'حسنًا',
+        { duration: 4500 }
+      );
+    }
+
+    if (added.length) {
+      this.selected = [...this.selected, ...added];
+      this.doneMessage = null;
+      this.snack.open(`تمت إضافة ${added.length} ملف(ات) PDF.`, 'حسنًا', { duration: 2500 });
+    }
+  }
+
+  process(): void {
+    if (!this.selected.length || this.isProcessing) return;
+
+    this.isProcessing = true;
+    this.doneMessage = null;
+    this.jobId = null;
+    this.progressDocs = [];
+    this.closeStream();
+
+    const files = this.selected.map(x => x.file);
+
+    this.adminService.startProcessDocuments(files).subscribe({
+      next: (res: any) => {
+        const jobId = res?.job_id;
+
+        if (!jobId) {
+          this.snack.open('لم يتم الحصول على job_id من الخادم.', 'حسنًا', { duration: 4000 });
+          this.isProcessing = false;
+          return;
+        }
+
+        this.jobId = jobId;
+
+        this.progressDocs = (res?.docs || []).map((d: any, index: number) => ({
+          doc_key: d.doc_key || d.stored_name || d.original_name || `doc-${index}`,
+          name: d.original_name || d.name || d.stored_name || `ملف ${index + 1}`,
+          rel_path: d.stored_path || d.rel_path || '',
+          status: 'done',
+          percent: 100,
+          current_page: 0,
+          total_pages: 0,
+          message: 'تم قبول الرفع'
+        }));
+
+        this.es = this.adminService.openProgressStream(jobId);
+
+        this.es.addEventListener('progress', (ev: MessageEvent) => {
+          this.zone.run(() => {
+            try {
+              const data = JSON.parse(ev.data || '{}');
+              this.applyProgressSnapshot(data);
+            } catch {
+              // ignore malformed progress events
+            }
+          });
+        });
+
+        this.es.addEventListener('done', (ev: MessageEvent) => {
+          this.zone.run(() => {
+            try {
+              const data = JSON.parse(ev.data || '{}');
+              this.applyProgressSnapshot(data);
+
+              const msg = data?.message || 'تم قبول الرفع. الإدماج التلقائي غير مفعّل حالياً.';
+              this.doneMessage = msg;
+              this.snack.open(msg, 'حسنًا', { duration: 4000 });
+            } catch {
+              this.doneMessage = 'تم قبول الرفع. الإدماج التلقائي غير مفعّل حالياً.';
+            } finally {
+              this.isProcessing = false;
+              this.closeStream();
+            }
+          });
+        });
+
+        this.es.onerror = (err) => {
+          console.error('SSE error', err);
+          this.zone.run(() => {
+            this.snack.open('انقطع اتصال التقدّم. قد يكون الخادم أكمل العملية بالفعل.', 'حسنًا', { duration: 5000 });
+            this.isProcessing = false;
+            this.closeStream();
+          });
+        };
+      },
+      error: (err) => {
+        console.error(err);
+        this.snack.open('حدث خطأ أثناء رفع الملفات. تحقق من الخادم.', 'حسنًا', { duration: 4500 });
+        this.isProcessing = false;
+      }
+    });
+  }
+
+  private applyProgressSnapshot(data: any): void {
+    const docs = data?.docs || [];
+    if (!Array.isArray(docs)) return;
+
+    this.progressDocs = docs.map((d: any, index: number) => ({
+      doc_key: d.doc_key || d.stored_name || d.original_name || `doc-${index}`,
+      name: d.original_name || d.name || d.stored_name || `ملف ${index + 1}`,
+      rel_path: d.stored_path || d.rel_path || '',
+      status: 'done',
+      percent: 100,
+      current_page: 0,
+      total_pages: 0,
+      message: 'تم قبول الرفع'
+    }));
+  }
+
+  private formatBytes(bytes: number): string {
+    if (!bytes && bytes !== 0) return '-';
+
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.min(Math.floor(Math.log(bytes) / Math.log(k)), sizes.length - 1);
+    const v = bytes / Math.pow(k, i);
+
+    return `${v.toFixed(v >= 10 || i === 0 ? 0 : 1)} ${sizes[i]}`;
+  }
+}
+
+######
+
+C:\Users\Abderrahman\Desktop\new_legal_ai\Froentend_BO\DocSearchFrontEnd\src\app\components\description-dialog\description-dialog.component.html
+
+<div class="dialog-container">
+  <div class="dialog-header">
+    <div>
+      <h2 mat-dialog-title>{{ data.title }}</h2>
+      <div class="dialog-subtitle" *ngIf="data.subtitle">{{ data.subtitle }}</div>
+    </div>
+
+    <button mat-icon-button (click)="dialogRef.close()" class="close-button">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-dialog-content class="dialog-content">
+    <div class="dialog-meta" dir="rtl" *ngIf="data.metadata">
+      <div *ngIf="data.metadata.doctype"><strong>نوع الوثيقة:</strong> {{ data.metadata.doctype }}</div>
+      <div *ngIf="data.metadata.lawnumber"><strong>رقم القانون:</strong> {{ data.metadata.lawnumber }}</div>
+      <div *ngIf="data.metadata.date"><strong>التاريخ:</strong> {{ data.metadata.date }}</div>
+      <div *ngIf="data.metadata.page !== undefined && data.metadata.page !== null"><strong>الصفحة:</strong> {{ data.metadata.page }}</div>
+      <div *ngIf="(data.metadata.subjects?.length || 0) > 0"><strong>الموضوعات:</strong> {{ data.metadata.subjects?.join('، ') }}</div>
+      <div *ngIf="(data.metadata.signatures?.length || 0) > 0"><strong>التوقيعات:</strong> {{ data.metadata.signatures?.join('، ') }}</div>
+    </div>
+
+    <div class="description-text" dir="rtl">
+      <pre>
+<app-highlight
+  [text]="data.description"
+  [searchTerms]="data.searchTerms || []"
+  [sourceRanges]="data.sourceRanges || []">
+</app-highlight>
+      </pre>
+    </div>
+  </mat-dialog-content>
+</div>
+
+######
+
+C:\Users\Abderrahman\Desktop\new_legal_ai\Froentend_BO\DocSearchFrontEnd\src\app\components\description-dialog\description-dialog.component.spec.ts
+
+
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { DescriptionDialogComponent } from './description-dialog.component';
+
+describe('DescriptionDialogComponent', () => {
+  let component: DescriptionDialogComponent;
+  let fixture: ComponentFixture<DescriptionDialogComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [ DescriptionDialogComponent ]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(DescriptionDialogComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+
+######
+
+C:\Users\Abderrahman\Desktop\new_legal_ai\Froentend_BO\DocSearchFrontEnd\src\app\components\description-dialog\description-dialog.component.ts
+
+import { Component, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+
+@Component({
+  selector: 'app-description-dialog',
+  templateUrl: './description-dialog.component.html',
+  styleUrls: ['./description-dialog.component.css']
+})
+export class DescriptionDialogComponent {
+  constructor(
+    public dialogRef: MatDialogRef<DescriptionDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: {
+      title: string;
+      subtitle?: string;
+      description: string;
+      searchTerms?: string[];
+      sourceRanges?: Array<[number, number] | number[] | { start: number; end: number }>;
+      metadata?: {
+        filename?: string;
+        doctype?: string;
+        lawnumber?: string;
+        date?: string;
+        subjects?: string[];
+        signatures?: string[];
+        page?: string | number;
+      };
+    }
+  ) {}
+}
+
+######
+
+C:\Users\Abderrahman\Desktop\new_legal_ai\Froentend_BO\DocSearchFrontEnd\src\app\components\highlight\highlight.component.html
+
+<span *ngFor="let part of parts" [class.highlight]="part.highlight">
+  {{ part.text }}
+</span>
+
+
+######
+
+C:\Users\Abderrahman\Desktop\new_legal_ai\Froentend_BO\DocSearchFrontEnd\src\app\components\highlight\highlight.component.spec.ts
+
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { HighlightComponent } from './highlight.component';
+
+describe('HighlightComponent', () => {
+  let component: HighlightComponent;
+  let fixture: ComponentFixture<HighlightComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [ HighlightComponent ]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(HighlightComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+
+######
+
+C:\Users\Abderrahman\Desktop\new_legal_ai\Froentend_BO\DocSearchFrontEnd\src\app\components\highlight\highlight.component.ts
+
+import { Component, Input, OnChanges } from '@angular/core';
+
+type Part = { text: string; highlight: boolean };
+type SourceRangeInput =
+  | [number, number]
+  | number[]
+  | { start: number; end: number };
+
+@Component({
+  selector: 'app-highlight',
+  template: `
+    <span *ngFor="let part of parts" [class.highlight]="part.highlight">
+      {{ part.text }}
+    </span>
+  `,
+  styles: [`
+    .highlight {
+      background-color: yellow;
+      color: black;
+      font-weight: bold;
+    }
+  `]
+})
+export class HighlightComponent implements OnChanges {
+  @Input() text: string = '';
+  @Input() searchTerms: string[] = [];
+
+  /**
+   * ✅ NEW:
+   * Explicit ranges [start, end) to highlight directly in the ORIGINAL text.
+   * Used for semantic search results (source_ranges from backend).
+   */
+  @Input() sourceRanges: SourceRangeInput[] = [];
+
+  parts: Part[] = [];
+
+  ngOnChanges(): void {
+    const text = this.text || '';
+
+    // ✅ Prefer exact source ranges when provided (semantic mode)
+    const rangeParts = this.buildHighlightedPartsFromRanges(text, this.sourceRanges || []);
+    if (rangeParts) {
+      this.parts = rangeParts;
+      return;
+    }
+
+    // fallback to old keyword-based highlighting (lexical mode)
+    this.parts = this.buildHighlightedParts(text, this.searchTerms || []);
+  }
+
+  // ------------------------------------------------------------------
+  // NEW: exact highlight by ranges ([start,end) Python slicing style)
+  // ------------------------------------------------------------------
+  private buildHighlightedPartsFromRanges(originalText: string, rawRanges: SourceRangeInput[]): Part[] | null {
+    if (!originalText) return [{ text: '', highlight: false }];
+    if (!Array.isArray(rawRanges) || rawRanges.length === 0) return null;
+
+    const ranges: Array<{ start: number; end: number }> = [];
+
+    for (const r of rawRanges) {
+      let a: any;
+      let b: any;
+
+      if (Array.isArray(r) && r.length >= 2) {
+        a = r[0];
+        b = r[1];
+      } else if (r && typeof r === 'object' && 'start' in r && 'end' in r) {
+        a = (r as any).start;
+        b = (r as any).end;
+      } else {
+        continue;
+      }
+
+      const start = Number(a);
+      const end = Number(b);
+
+      if (!Number.isFinite(start) || !Number.isFinite(end)) continue;
+
+      let s = Math.trunc(start);
+      let e = Math.trunc(end);
+
+      // assume [start, end) (end exclusive)
+      if (e < s) {
+        const t = s; s = e; e = t;
+      }
+
+      s = Math.max(0, Math.min(originalText.length, s));
+      e = Math.max(0, Math.min(originalText.length, e));
+
+      if (e <= s) continue;
+
+      ranges.push({ start: s, end: e });
+    }
+
+    if (ranges.length === 0) return null;
+
+    ranges.sort((x, y) => x.start - y.start || x.end - y.end);
+
+    // merge overlapping/touching ranges
+    const merged: Array<{ start: number; end: number }> = [];
+    for (const r of ranges) {
+      const last = merged[merged.length - 1];
+      if (!last) {
+        merged.push({ ...r });
+      } else if (r.start <= last.end) {
+        last.end = Math.max(last.end, r.end);
+      } else {
+        merged.push({ ...r });
+      }
+    }
+
+    const parts: Part[] = [];
+    let cursor = 0;
+
+    for (const r of merged) {
+      if (r.start > cursor) {
+        parts.push({ text: originalText.slice(cursor, r.start), highlight: false });
+      }
+      parts.push({ text: originalText.slice(r.start, r.end), highlight: true });
+      cursor = r.end;
+    }
+
+    if (cursor < originalText.length) {
+      parts.push({ text: originalText.slice(cursor), highlight: false });
+    }
+
+    return parts.length ? parts : [{ text: originalText, highlight: false }];
+  }
+
+  // ------------------------------------------------------------------
+  // Existing keyword-based highlight (lexical mode)
+  // ------------------------------------------------------------------
+  private buildHighlightedParts(originalText: string, rawTerms: string[]): Part[] {
+    if (!originalText) return [{ text: '', highlight: false }];
+
+    const terms = rawTerms.map(t => (t || '').trim()).filter(Boolean);
+    if (terms.length === 0) return [{ text: originalText, highlight: false }];
+
+    const { norm, mapNormToOrig } = this.normalizeWithMap(originalText);
+
+    const normTerms = Array.from(new Set(
+      terms.map(t => this.normalizeArabic(t)).filter(Boolean)
+    )).sort((a, b) => b.length - a.length);
+
+    if (normTerms.length === 0 || !norm) return [{ text: originalText, highlight: false }];
+
+    const matches: Array<{ start: number; end: number }> = [];
+
+    for (const nt of normTerms) {
+      let from = 0;
+      while (from <= norm.length) {
+        const idx = norm.indexOf(nt, from);
+        if (idx === -1) break;
+        matches.push({ start: idx, end: idx + nt.length });
+        from = idx + Math.max(1, nt.length);
+      }
+    }
+
+    if (matches.length === 0) return [{ text: originalText, highlight: false }];
+
+    matches.sort((a, b) => a.start - b.start || a.end - b.end);
+    const merged: Array<{ start: number; end: number }> = [];
+    for (const m of matches) {
+      const last = merged[merged.length - 1];
+      if (!last || m.start > last.end) merged.push({ ...m });
+      else last.end = Math.max(last.end, m.end);
+    }
+
+    const ranges: Array<{ start: number; end: number }> = merged.map(r => {
+      const startOrig = this.normIndexToOrigIndex(mapNormToOrig, r.start);
+      const endOrigExclusive = this.normIndexToOrigIndex(mapNormToOrig, r.end - 1) + 1;
+      return {
+        start: Math.max(0, Math.min(originalText.length, startOrig)),
+        end: Math.max(0, Math.min(originalText.length, endOrigExclusive)),
+      };
+    }).filter(r => r.end > r.start);
+
+    ranges.sort((a, b) => a.start - b.start || a.end - b.end);
+    const mergedRanges: Array<{ start: number; end: number }> = [];
+    for (const r of ranges) {
+      const last = mergedRanges[mergedRanges.length - 1];
+      if (!last || r.start > last.end) mergedRanges.push({ ...r });
+      else last.end = Math.max(last.end, r.end);
+    }
+
+    const parts: Part[] = [];
+    let cursor = 0;
+    for (const r of mergedRanges) {
+      if (r.start > cursor) parts.push({ text: originalText.slice(cursor, r.start), highlight: false });
+      parts.push({ text: originalText.slice(r.start, r.end), highlight: true });
+      cursor = r.end;
+    }
+    if (cursor < originalText.length) parts.push({ text: originalText.slice(cursor), highlight: false });
+
+    return parts.length ? parts : [{ text: originalText, highlight: false }];
+  }
+
+  private normalizeArabic(text: string): string {
+    return (text || '')
+      .replace(/[\u064B-\u065F\u0670\u06D6-\u06ED]/g, '') // harakat + Quranic marks
+      .replace(/ـ/g, '') // tatweel
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  private normalizeWithMap(original: string): { norm: string; mapNormToOrig: number[] } {
+    const map: number[] = [];
+    const out: string[] = [];
+
+    for (let i = 0; i < original.length; i++) {
+      const ch = original[i];
+      if (/[\u064B-\u065F\u0670\u06D6-\u06ED]/.test(ch)) continue;
+      if (ch === 'ـ') continue;
+      out.push(ch);
+      map.push(i);
+    }
+
+    // collapse whitespace (best effort mapping)
+    const normRaw = out.join('');
+    const mapRaw = map;
+
+    const norm2: string[] = [];
+    const map2: number[] = [];
+
+    let j = 0;
+    while (j < normRaw.length) {
+      const c = normRaw[j];
+      if (/\s/.test(c)) {
+        norm2.push(' ');
+        map2.push(mapRaw[j]);
+        while (j < normRaw.length && /\s/.test(normRaw[j])) j++;
+      } else {
+        norm2.push(c);
+        map2.push(mapRaw[j]);
+        j++;
+      }
+    }
+
+    // trim norm2 and map2 together
+    while (norm2.length && norm2[0] === ' ') { norm2.shift(); map2.shift(); }
+    while (norm2.length && norm2[norm2.length - 1] === ' ') { norm2.pop(); map2.pop(); }
+
+    return { norm: norm2.join(''), mapNormToOrig: map2 };
+  }
+
+  private normIndexToOrigIndex(mapNormToOrig: number[], normIndex: number): number {
+    if (!mapNormToOrig.length) return 0;
+    const i = Math.max(0, Math.min(mapNormToOrig.length - 1, normIndex));
+    return mapNormToOrig[i];
+  }
+}
+
+######
+
+C:\Users\Abderrahman\Desktop\new_legal_ai\Froentend_BO\DocSearchFrontEnd\src\app\components\pdf-viewer\pdf-viewer.component.html
+
+
+
+######
+
+C:\Users\Abderrahman\Desktop\new_legal_ai\Froentend_BO\DocSearchFrontEnd\src\app\components\pdf-viewer\pdf-viewer.component.spec.ts
+
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { PdfViewerComponent } from './pdf-viewer.component';
+
+describe('PdfViewerComponent', () => {
+  let component: PdfViewerComponent;
+  let fixture: ComponentFixture<PdfViewerComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [ PdfViewerComponent ]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(PdfViewerComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+
+######
+
+C:\Users\Abderrahman\Desktop\new_legal_ai\Froentend_BO\DocSearchFrontEnd\src\app\components\pdf-viewer\pdf-viewer.component.ts
+
+import { Component, Inject, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { NgxExtendedPdfViewerComponent } from 'ngx-extended-pdf-viewer';
+
+@Component({
+  selector: 'app-pdf-viewer',
+  template: `
+    <ngx-extended-pdf-viewer 
+      #pdfViewer
+      [src]="data.fileUrl"
+      [useBrowserLocale]="true"
+      [textLayer]="true"
+      [zoom]="'page-width'"
+      [page]="data.page"
+      [showSidebarButton]="true"
+      [showFindButton]="true"
+      language="ar"
+      (pdfLoaded)="onPdfLoaded()"
+      (pageRendered)="onPageRendered($event)">
+    </ngx-extended-pdf-viewer>
+  `,
+  styles: [`
+    ngx-extended-pdf-viewer { width: 100%; height: 90vh; }
+  `]
+})
+export class PdfViewerComponent implements AfterViewInit, OnDestroy {
+  @ViewChild('pdfViewer') pdfViewer!: NgxExtendedPdfViewerComponent;
+
+  private isPdfLoaded = false;
+  private targetPage: number;
+
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any) {
+    this.targetPage = this.data?.page || 1;
+  }
+
+  ngAfterViewInit(): void {
+    // nothing here
+  }
+
+  onPdfLoaded(): void {
+    this.isPdfLoaded = true;
+
+    const pdfApplication = (window as any).PDFViewerApplication;
+    const eventBus = pdfApplication?.eventBus;
+
+    // Re-apply when the search bar is opened
+    eventBus?.on("findbaropen", () => {
+      if (this.data?.searchTerms?.length) {
+        this.tryBuiltInSearch(this.data.searchTerms);
+      }
+    });
+
+    // Restore when the user clears the search box
+    eventBus?.on("find", (evt: any) => {
+      if ((!evt.query || evt.query.trim() === "") && this.data?.searchTerms?.length) {
+        setTimeout(() => {
+          this.tryBuiltInSearch(this.data.searchTerms);
+        }, 100);
+      }
+    });
+
+    setTimeout(() => {
+      if (pdfApplication?.pdfViewer && pdfApplication.pdfViewer.currentPageNumber !== this.targetPage) {
+        pdfApplication.pdfViewer.currentPageNumber = this.targetPage;
+      }
+
+      if (this.data?.searchTerms?.length) {
+        setTimeout(() => {
+          this.tryBuiltInSearch(this.data.searchTerms);
+        }, 200);
+      }
+    }, 100);
+  }
+
+  onPageRendered(event: any): void {
+    // no custom logic needed
+  }
+
+  ngOnDestroy(): void {
+    // no cleanup needed
+  }
+
+  // 🔎 Main search logic - now handles ALL terms
+  private async tryBuiltInSearch(terms: string[]) {
+    if (!this.isPdfLoaded || !terms.length) return;
+
+    const pdfApplication = (window as any).PDFViewerApplication;
+    const pdfViewer = pdfApplication?.pdfViewer;
+
+    if (!pdfViewer) return;
+
+    // Find the best page (based on first term) and collect all matched texts
+    const firstTerm = terms[0];
+    const match = await this.findNearestPage(pdfViewer, firstTerm, this.targetPage);
+    
+    if (match) {
+      pdfViewer.currentPageNumber = match.page;
+      
+      // Collect all search terms (with their original text including Tatweel)
+      const allMatchedTexts: string[] = [];
+      
+      for (const term of terms) {
+        const matchedText = await this.findInPage(pdfViewer, term, match.page);
+        if (matchedText) {
+          allMatchedTexts.push(matchedText);
+        } else {
+          // If not found on current page, use the normalized term
+          allMatchedTexts.push(term);
+        }
+      }
+      
+      // Dispatch search with all terms (no spaces between them, joined directly)
+      setTimeout(() => this.dispatchMultipleSearch(allMatchedTexts), 300);
+    } else {
+      console.warn("Search term not found in document");
+    }
+  }
+
+  // Search one page and return first matching substring (with Tatweel)
+  private async findInPage(pdfViewer: any, term: string, pageNumber: number): Promise<string | null> {
+    try {
+      const page = await pdfViewer.pdfDocument.getPage(pageNumber);
+      const textContent = await page.getTextContent();
+
+      const rawText = textContent.items.map((i: any) => i.str).join(" ");
+
+      const normalizedRaw = this.normalizeArabic(rawText);
+      const normalizedTerm = this.normalizeArabic(term);
+
+      if (normalizedRaw.includes(normalizedTerm)) {
+        // Extract substring with Tatweel
+        const regex = new RegExp(normalizedTerm.replace(/\s+/g, "\\s*"), "g");
+
+        // Walk through words to find original substring
+        const words = rawText.split(/\s+/);
+        for (let i = 0; i < words.length; i++) {
+          const candidate = words.slice(i, i + term.split(" ").length).join(" ");
+          if (this.normalizeArabic(candidate) === normalizedTerm) {
+            return candidate; // return with Tatweel
+          }
+        }
+        return term; // fallback
+      }
+      return null;
+    } catch (err) {
+      return null;
+    }
+  }
+
+  // Search multiple pages around current
+  private async findNearestPage(pdfViewer: any, term: string, fromPage: number): Promise<{ page: number, text: string } | null> {
+    const totalPages = pdfViewer.pagesCount;
+
+    for (let offset = 0; offset < totalPages; offset++) {
+      const prev = fromPage - offset;
+      if (prev >= 1) {
+        const match = await this.findInPage(pdfViewer, term, prev);
+        if (match) return { page: prev, text: match };
+      }
+
+      const next = fromPage + offset;
+      if (next <= totalPages) {
+        const match = await this.findInPage(pdfViewer, term, next);
+        if (match) return { page: next, text: match };
+      }
+    }
+    return null;
+  }
+
+  // Dispatch multiple search terms to PDF.js event bus
+  // Terms are joined with NEWLINE separator (no spaces)
+  private dispatchMultipleSearch(searchTerms: string[]) {
+    const pdfApplication = (window as any).PDFViewerApplication;
+    const eventBus = pdfApplication?.eventBus;
+    if (!eventBus) return;
+
+    // For single term: use the term directly with phraseSearch=true
+    // For multiple terms: join with newline and use phraseSearch=false
+    const isSingleTerm = searchTerms.length === 1;
+    const combinedQuery = isSingleTerm ? searchTerms[0] : searchTerms.join('\n');
+
+    console.log('Combined Query:', combinedQuery);
+    console.log('Search terms array:', searchTerms);
+    console.log('Phrase search mode:', isSingleTerm);
+
+    eventBus.dispatch("find", {
+      source: this,
+      type: "find",
+      query: combinedQuery,
+      phraseSearch: isSingleTerm,  // 🔑 true for single term, false for multiple
+      caseSensitive: false,
+      entireWord: false,
+      highlightAll: true,          // 🔑 Highlight all occurrences
+      findPrevious: false
+    });
+  }
+
+  // Remove Tatweel + diacritics for comparison
+  private normalizeArabic(text: string): string {
+    return text
+      .replace(/[\u064B-\u065F\u0670\u06D6-\u06ED]/g, "") // remove harakat
+      .replace(/ـ/g, "") // remove Tatweel
+      .replace(/\s+/g, " ") // normalize spaces
+      .trim();
+  }
+}
+
+######
+
+C:\Users\Abderrahman\Desktop\new_legal_ai\Froentend_BO\DocSearchFrontEnd\src\app\components\phrase-dialog\phrase-dialog.component.html
+
+<div class="dialog-container">
+  <div class="dialog-header">
+    <h2 mat-dialog-title>{{ data.phrase }}</h2>
+    <button mat-icon-button (click)="dialogRef.close()" class="close-button">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-dialog-content class="dialog-content">
+    <div class="description-text" dir="rtl">
+      <div *ngIf="data.lawData">
+        <p>{{ data.lawData.results[0].chunk }}</p>
+      </div>
+      <div *ngIf="!data.lawData">
+        <p>Aucune donnée trouvée pour ce numéro de loi.</p>
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <!-- Footer -->
+  <mat-dialog-actions class="dialog-footer" align="center">
+    <button 
+      mat-raised-button 
+      color="primary" 
+      (click)="openPdf(data.lawData.results[0].id)" 
+      [disabled]="!data.lawData"
+    >
+      فتح الملف
+    </button>
+  </mat-dialog-actions>
+</div>
+
+
+######
+
+C:\Users\Abderrahman\Desktop\new_legal_ai\Froentend_BO\DocSearchFrontEnd\src\app\components\phrase-dialog\phrase-dialog.component.spec.ts
+
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { PhraseDialogComponent } from './phrase-dialog.component';
+
+describe('PhraseDialogComponent', () => {
+  let component: PhraseDialogComponent;
+  let fixture: ComponentFixture<PhraseDialogComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [ PhraseDialogComponent ]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(PhraseDialogComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+
+######
+
+C:\Users\Abderrahman\Desktop\new_legal_ai\Froentend_BO\DocSearchFrontEnd\src\app\components\phrase-dialog\phrase-dialog.component.ts
+
+import { Component, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { SearchService } from 'src/app/services/search.service';
+import { MatDialog } from '@angular/material/dialog';
+import { PdfViewerComponent } from '../pdf-viewer/pdf-viewer.component';
+
+@Component({
+  selector: 'app-phrase-dialog',
+  templateUrl: './phrase-dialog.component.html',
+  styleUrls: ['./phrase-dialog.component.css'] // on peut réutiliser le même css
+})
+export class PhraseDialogComponent {
+  constructor(
+    private searchService: SearchService, private dialog: MatDialog,
+    public dialogRef: MatDialogRef<PhraseDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: { phrase: string; lawData?: any }
+  ) {}
+
+  openPdf(chunkId: number) {
+    this.searchService.openPdf(chunkId).subscribe({
+      next: (res: any) => {
+        // console.log('📄 URL PDF envoyée au viewer:', res.file_url);
+        this.dialog.open(PdfViewerComponent, {
+          width: '90vw',
+          height: '95vh',
+          data: {
+            fileUrl: res.file_url,
+            page: res.page,
+            searchTerms: null
+          }
+        });
+      },
+      error: (err) => console.error('❌ Erreur ouverture PDF :', err)
+    });
+  }
+}
+
+
+######
+
+C:\Users\Abderrahman\Desktop\new_legal_ai\Froentend_BO\DocSearchFrontEnd\src\app\components\search\search.component.html
+
+<div class="search-topbar">
+  <div class="topbar-left">
+    <button mat-stroked-button color="primary" class="admin-entry-btn" (click)="goToAdmin()">
+      <mat-icon>admin_panel_settings</mat-icon>
+      لوحة الإدارة
+    </button>
+  </div>
+</div>
+
+<div class="modern-page" dir="rtl">
+  <main class="modern-shell">
+    <div class="filters-container">
+      <div class="filter-header">
+        <div class="search-container">
+          <div class="search-row search-row-wide">
+            <div class="search-input-flex">
+              <p-chips
+                *ngIf="!isSemanticSearch"
+                class="main-query-chips"
+                [style]="{ width: '100%' }"
+                [(ngModel)]="searchQueries"
+                (ngModelChange)="onSearchQueriesChipsChange($event)"
+                separator=","
+                [addOnBlur]="true"
+                placeholder="اكتب استعلامًا ثم اضغط Enter">
+              </p-chips>
+
+              <textarea
+                *ngIf="isSemanticSearch"
+                pInputTextarea
+                class="main-query-textarea"
+                [style]="{ width: '100%' }"
+                [(ngModel)]="searchQueryText"
+                (ngModelChange)="onSearchQueryTextChange($event)"
+                rows="3"
+                placeholder="اكتب استعلامًا قانونيًا واحدًا، ويمكن أن يحتوي على عدة أسطر">
+              </textarea>
+            </div>
+
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="applyFilters()"
+              class="btn btn-primary search-btn">
+              <mat-icon>search</mat-icon>
+              بحث
+            </button>
+          </div>
+
+          <div class="semantic-checkbox">
+            <p-checkbox
+              [binary]="true"
+              [(ngModel)]="isSemanticSearch"
+              (ngModelChange)="onSemanticToggle($event)"
+              [disabled]="!canUseSemanticSearch"
+              inputId="semanticSearch"
+              label="تفعيل البحث الدلالي (اختياري)">
+            </p-checkbox>
+
+            <div class="semantic-help" *ngIf="cleanQueryCount !== 1">
+              <small>البحث الدلالي متاح فقط عند إدخال استعلام واحد.</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-header">
+        <button class="toggle-filters" (click)="toggleFilters()">
+          <mat-icon>{{ showFilters ? 'expand_less' : 'expand_more' }}</mat-icon>
+          <span>{{ showFilters ? 'إخفاء الفلاتر' : 'إظهار فلاتر البحث المتقدم' }}</span>
+          <mat-icon>filter_alt</mat-icon>
+        </button>
+      </div>
+
+      <div class="filters-body p-fluid" [class.hidden]="!showFilters">
+        <div class="filter-notice" *ngIf="filtersLoading">
+          <small>جارٍ تحميل خيارات الفلاتر من الخادم...</small>
+        </div>
+
+        <div class="filter-notice error" *ngIf="filtersLoadError">
+          <small>{{ filtersLoadError }}</small>
+        </div>
+
+        <div class="filter-row">
+          <div class="filter-group">
+            <label style="margin-bottom: 10px;">الكلمات الإلزامية</label>
+            <p-chips
+              [(ngModel)]="mandatoryKeywords"
+              separator=","
+              [addOnBlur]="true"
+              placeholder="أدخل الكلمات ثم اضغط Enter أو فاصلة">
+            </p-chips>
+          </div>
+
+          <div class="filter-group">
+            <label style="margin-bottom: 10px;">الموضوعات</label>
+            <p-multiSelect
+              [options]="subjectOptions"
+              [(ngModel)]="selectedSubjects"
+              optionLabel="label"
+              optionValue="value"
+              defaultLabel="اختر الموضوعات"
+              [filter]="true"
+              appendTo="body"
+              panelStyleClass="overlay-lg">
+            </p-multiSelect>
+          </div>
+        </div>
+
+        <div class="filter-row">
+          <div class="filter-group">
+            <label style="margin-bottom: 10px;">التوقيعات</label>
+            <p-multiSelect
+              [options]="signatureOptions"
+              [(ngModel)]="selectedSignatures"
+              optionLabel="label"
+              optionValue="value"
+              defaultLabel="اختر التوقيعات"
+              [filter]="true"
+              appendTo="body"
+              panelStyleClass="overlay-lg">
+            </p-multiSelect>
+          </div>
+
+          <div class="filter-group">
+            <label style="margin-bottom: 10px;">اسم الملف</label>
+            <p-multiSelect
+              [options]="filenameOptions"
+              [(ngModel)]="selectedFilenames"
+              optionLabel="label"
+              optionValue="value"
+              defaultLabel="اختر الملفات"
+              [filter]="true"
+              appendTo="body"
+              panelStyleClass="overlay-lg">
+            </p-multiSelect>
+          </div>
+        </div>
+
+        <div class="filter-row">
+          <div class="filter-group">
+            <label style="margin-bottom: 10px;">نوع الوثيقة</label>
+            <p-multiSelect
+              [options]="doctypeOptions"
+              [(ngModel)]="selectedDoctypes"
+              optionLabel="label"
+              optionValue="value"
+              defaultLabel="اختر نوع الوثيقة"
+              [filter]="true"
+              appendTo="body"
+              panelStyleClass="overlay-lg">
+            </p-multiSelect>
+          </div>
+
+			<div class="filter-group">
+			  <label style="margin-bottom: 10px;">رقم القانون</label>
+
+			  <p-autoComplete
+				[(ngModel)]="selectedLawnumbers"
+				[suggestions]="filteredLawnumberOptions"
+				(completeMethod)="onLawnumberSearch($event)"
+				[multiple]="true"
+				[dropdown]="false"
+				[minLength]="1"
+				[forceSelection]="true"
+				[showEmptyMessage]="true"
+				emptyMessage="لا توجد اقتراحات"
+				appendTo="body"
+				placeholder="ابدأ بكتابة رقم القانون..."
+				styleClass="w-100">
+			  </p-autoComplete>
+
+			  <small class="filter-hint">
+				لن تظهر أي قائمة قبل الكتابة، وسيتم عرض أفضل 100 اقتراح فقط.
+			  </small>
+			</div>
+		  
+		  
+        </div>
+
+
+
+		<div class="filter-row">
+		  <div class="filter-group">
+		  <label style="margin-bottom: 10px;">من (شهر / سنة)</label>
+
+		  <ng-container *ngIf="minDate && maxDate">
+			<p-calendar
+			  [(ngModel)]="selectedDateFromMonth"
+			  (ngModelChange)="onDateFromMonthChange($event)"
+			  view="month"
+			  dateFormat="yy-mm"
+			  [readonlyInput]="true"
+			  placeholder="اختر شهر البداية"
+			  appendTo="body"
+			  [showIcon]="true"
+			  [minDate]="minDate"
+			  [maxDate]="maxDate">
+			</p-calendar>
+		  </ng-container>
+
+		  <ng-container *ngIf="minDate && !maxDate">
+			<p-calendar
+			  [(ngModel)]="selectedDateFromMonth"
+			  (ngModelChange)="onDateFromMonthChange($event)"
+			  view="month"
+			  dateFormat="yy-mm"
+			  [readonlyInput]="true"
+			  placeholder="اختر شهر البداية"
+			  appendTo="body"
+			  [showIcon]="true"
+			  [minDate]="minDate">
+			</p-calendar>
+		  </ng-container>
+
+		  <ng-container *ngIf="!minDate && maxDate">
+			<p-calendar
+			  [(ngModel)]="selectedDateFromMonth"
+			  (ngModelChange)="onDateFromMonthChange($event)"
+			  view="month"
+			  dateFormat="yy-mm"
+			  [readonlyInput]="true"
+			  placeholder="اختر شهر البداية"
+			  appendTo="body"
+			  [showIcon]="true"
+			  [maxDate]="maxDate">
+			</p-calendar>
+		  </ng-container>
+
+		  <ng-container *ngIf="!minDate && !maxDate">
+			<p-calendar
+			  [(ngModel)]="selectedDateFromMonth"
+			  (ngModelChange)="onDateFromMonthChange($event)"
+			  view="month"
+			  dateFormat="yy-mm"
+			  [readonlyInput]="true"
+			  placeholder="اختر شهر البداية"
+			  appendTo="body"
+			  [showIcon]="true">
+			</p-calendar>
+		  </ng-container>
+		</div>
+
+		  <div class="filter-group">
+		  <label style="margin-bottom: 10px;">إلى (شهر / سنة)</label>
+
+		  <ng-container *ngIf="minDate && maxDate">
+			<p-calendar
+			  [(ngModel)]="selectedDateToMonth"
+			  (ngModelChange)="onDateToMonthChange($event)"
+			  view="month"
+			  dateFormat="yy-mm"
+			  [readonlyInput]="true"
+			  placeholder="اختر شهر النهاية"
+			  appendTo="body"
+			  [showIcon]="true"
+			  [minDate]="minDate"
+			  [maxDate]="maxDate">
+			</p-calendar>
+		  </ng-container>
+
+		  <ng-container *ngIf="minDate && !maxDate">
+			<p-calendar
+			  [(ngModel)]="selectedDateToMonth"
+			  (ngModelChange)="onDateToMonthChange($event)"
+			  view="month"
+			  dateFormat="yy-mm"
+			  [readonlyInput]="true"
+			  placeholder="اختر شهر النهاية"
+			  appendTo="body"
+			  [showIcon]="true"
+			  [minDate]="minDate">
+			</p-calendar>
+		  </ng-container>
+
+		  <ng-container *ngIf="!minDate && maxDate">
+			<p-calendar
+			  [(ngModel)]="selectedDateToMonth"
+			  (ngModelChange)="onDateToMonthChange($event)"
+			  view="month"
+			  dateFormat="yy-mm"
+			  [readonlyInput]="true"
+			  placeholder="اختر شهر النهاية"
+			  appendTo="body"
+			  [showIcon]="true"
+			  [maxDate]="maxDate">
+			</p-calendar>
+		  </ng-container>
+
+		  <ng-container *ngIf="!minDate && !maxDate">
+			<p-calendar
+			  [(ngModel)]="selectedDateToMonth"
+			  (ngModelChange)="onDateToMonthChange($event)"
+			  view="month"
+			  dateFormat="yy-mm"
+			  [readonlyInput]="true"
+			  placeholder="اختر شهر النهاية"
+			  appendTo="body"
+			  [showIcon]="true">
+			</p-calendar>
+		  </ng-container>
+		</div>
+		</div>
+		
+		
+		
+
+        <div class="filter-actions">
+          <div class="right-actions">
+            <button mat-raised-button color="primary" (click)="applyFilters()" class="apply-filters-btn">
+              تطبيق الفلاتر
+            </button>
+            <button mat-stroked-button color="warn" (click)="resetFilters()" class="reset-filters-btn">
+              إعادة التعيين
+            </button>
+          </div>
+
+          <div class="left-actions">
+            <button mat-stroked-button color="accent" (click)="toggleFilters()" class="toggle-filters-btn">
+              إخفاء الفلاتر
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="results-bar">
+      <div class="results-count">
+        عدد النتائج : <span class="count-number">{{ totalResults }}</span>
+      </div>
+
+      <div class="export-actions">
+
+        <button
+          mat-raised-button
+          color="primary"
+          class="export-btn export-full"
+          (click)="exportFull()"
+          [disabled]="totalResults === 0 || isExportingFull">
+          <mat-icon>download</mat-icon>
+          {{ isExportingFull ? 'جارٍ التصدير...' : 'تصدير كامل (TXT)' }}
+        </button>
+      </div>
+    </div>
+
+    <section class="results-grid" *ngIf="pagedCards.length > 0">
+      <article
+        class="result-card"
+        *ngFor="let r of pagedCards"
+        [@fadeUp]>
+        <div class="card-pad">
+          <div class="card-head">
+            <div class="head-text">
+              <h3 class="card-title-modern">{{ r.title }}</h3>
+
+              <div class="meta">
+                <span class="meta-item">
+                  <mat-icon class="meta-icon">gavel</mat-icon>
+                  <span class="meta-strong">{{ r.source }}</span>
+                </span>
+
+                <span class="meta-dot">•</span>
+
+                <span class="meta-strong">صفحة {{ r.page }}</span>
+
+                <ng-container *ngIf="r.score !== null && r.score !== undefined">
+                  <span class="meta-dot">•</span>
+                  <span class="meta-score">Score {{ r.score | number:'1.2-2' }}</span>
+                </ng-container>
+              </div>
+
+              <div class="meta" *ngIf="(r.subjects?.length || 0) > 0">
+                <span class="meta-item">
+                  <mat-icon class="meta-icon">topic</mat-icon>
+                  <span>{{ r.subjects?.join('، ') }}</span>
+                </span>
+              </div>
+
+              <div class="meta" *ngIf="(r.signatures?.length || 0) > 0">
+                <span class="meta-item">
+                  <mat-icon class="meta-icon">edit_note</mat-icon>
+                  <span>{{ r.signatures?.join('، ') }}</span>
+                </span>
+              </div>
+            </div>
+
+            <div class="head-actions">
+              <button
+                type="button"
+                mat-icon-button
+                class="icon-btn"
+                matTooltip="نسخ المقتطف"
+                (click)="copySnippet(r.snippet)">
+                <mat-icon>content_copy</mat-icon>
+              </button>
+
+              <button
+                type="button"
+                mat-icon-button
+                class="icon-btn"
+                matTooltip="إخفاء النتيجة"
+                (click)="hideResult(r.id)">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+          </div>
+
+          <div class="preview-wrap">
+            <div class="preview-box" [class.collapsed]="!isExpanded(r.id)">
+              <app-highlight
+                [text]="r.snippet"
+                [searchTerms]="searchTerms"
+                [sourceRanges]="r.sourceRanges || []">
+              </app-highlight>
+            </div>
+
+            <div class="fade-bottom" *ngIf="!isExpanded(r.id)"></div>
+          </div>
+
+          <div class="card-foot">
+            <button
+              type="button"
+              class="toggle-btn"
+              (click)="toggleExpanded(r.id)">
+              <mat-icon class="toggle-icon">{{ isExpanded(r.id) ? 'expand_less' : 'expand_more' }}</mat-icon>
+              <span>{{ isExpanded(r.id) ? 'إظهار أقل' : 'إظهار المزيد من المقتطف' }}</span>
+            </button>
+
+            <div class="foot-actions">
+              <button
+                type="button"
+                class="ghost-btn"
+                (click)="openDialogById(r.id)">
+                عرض المزيد
+              </button>
+
+              <button
+                type="button"
+                class="primary-btn"
+                (click)="openDocument(r.id)">
+                فتح الـ PDF
+                <mat-icon class="ext-icon">open_in_new</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <div class="empty-modern" *ngIf="pagedCards.length === 0 && totalResults === 0">
+      <mat-icon>search</mat-icon>
+      <div>ابدأ بالبحث في النصوص القانونية لعرض النتائج.</div>
+    </div>
+
+    <nav *ngIf="totalPages > 1">
+      <ul class="pagination justify-content-center">
+        <li class="page-item" [class.disabled]="currentPage === 1">
+          <button class="page-link" (click)="goToPage(currentPage - 1)">«</button>
+        </li>
+
+        <li *ngIf="visiblePages[0] > 1" class="page-item disabled">
+          <span class="page-link">...</span>
+        </li>
+
+        <li *ngFor="let page of visiblePages" class="page-item" [class.active]="currentPage === page">
+          <button class="page-link" (click)="goToPage(page)">{{ page }}</button>
+        </li>
+
+        <li *ngIf="visiblePages[visiblePages.length - 1] < totalPages" class="page-item disabled">
+          <span class="page-link">...</span>
+        </li>
+
+        <li class="page-item" [class.disabled]="currentPage === totalPages">
+          <button class="page-link" (click)="goToPage(currentPage + 1)">»</button>
+        </li>
+      </ul>
+    </nav>
+  </main>
+</div>
+
+######
+
+C:\Users\Abderrahman\Desktop\new_legal_ai\Froentend_BO\DocSearchFrontEnd\src\app\components\search\search.component.spec.ts
+
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { SearchComponent } from './search.component';
+
+describe('SearchComponent', () => {
+  let component: SearchComponent;
+  let fixture: ComponentFixture<SearchComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [ SearchComponent ]
+    })
+    .compileComponents();
+
+    fixture = TestBed.createComponent(SearchComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
+
+
+######
+
+C:\Users\Abderrahman\Desktop\new_legal_ai\Froentend_BO\DocSearchFrontEnd\src\app\components\search\search.component.ts
+
+import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
+import { animate, style, transition, trigger } from '@angular/animations';
+
+import { SearchService } from 'src/app/services/search.service';
+import { DescriptionDialogComponent } from '../description-dialog/description-dialog.component';
+import { PdfViewerComponent } from '../pdf-viewer/pdf-viewer.component';
+import { DOCUMENT_TYPES, LEGAL_SUBJECTS, SelectOption } from 'src/app/constants/filters-data';
+
+type SearchResultCard = {
+  id: number;
+  title: string;
+  source: string;
+  page: string | number;
+  score?: number | null;
+  snippet: string;
+
+  filename?: string;
+  doctype?: string;
+  lawnumber?: string;
+  date?: string;
+  subjects?: string[];
+  signatures?: string[];
+  sourceRanges?: Array<[number, number] | number[] | { start: number; end: number }>;
+};
+
+@Component({
+  selector: 'app-search',
+  templateUrl: './search.component.html',
+  styleUrls: ['./search.component.css'],
+  animations: [
+    trigger('fadeUp', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(10px)' }),
+        animate('220ms ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+      ])
+    ])
+  ]
+})
+export class SearchComponent implements OnInit {
+  allCards: SearchResultCard[] = [];
+
+  searchQueries: string[] = [];
+  searchQueryText = '';
+
+  currentPage = 1;
+  pageSize = 15;
+
+  totalResults = 0;
+  totalPages = 1;
+
+  showFilters = false;
+
+  mandatoryKeywords: string[] = [];
+  isSemanticSearch = false;
+
+  selectedSubjects: string[] = [];
+  selectedSignatures: string[] = [];
+  selectedFilenames: string[] = [];
+  selectedDoctypes: string[] = [];
+  selectedLawnumbers: string[] = [];
+
+  // ✅ new: separate month/year boundaries
+  selectedDateFromMonth: Date | null = null;
+  selectedDateToMonth: Date | null = null;
+
+  subjectOptions: SelectOption[] = [];
+  signatureOptions: SelectOption[] = [];
+  filenameOptions: SelectOption[] = [];
+  doctypeOptions: SelectOption[] = [];
+
+  // kept only if you still want raw options internally
+  lawnumberOptions: SelectOption[] = [];
+
+  // ✅ new: raw values + top-k filtered suggestions
+  rawLawnumberValues: string[] = [];
+  filteredLawnumberOptions: string[] = [];
+
+  filtersLoading = false;
+  filtersLoadError = '';
+
+  expandedQueries: string[] = [];
+  searchTerms: string[] = [];
+
+  private _lastFilters: any = null;
+  private expandedIds = new Set<number>();
+
+
+  isExportingFull = false;
+
+	minDate: Date | null = null;
+	maxDate: Date | null = null;
+
+  constructor(
+    private searchService: SearchService,
+    private dialog: MatDialog,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    this.loadFilterOptions();
+    this.enforceSemanticSearchRule();
+  }
+
+  isExpanded(id: number): boolean {
+    return this.expandedIds.has(id);
+  }
+
+  toggleExpanded(id: number): void {
+    if (this.expandedIds.has(id)) {
+      this.expandedIds.delete(id);
+    } else {
+      this.expandedIds.add(id);
+    }
+  }
+
+  copySnippet(text: string): void {
+    const value = text || '';
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(value).catch(() => {});
+      return;
+    }
+
+    try {
+      const ta = document.createElement('textarea');
+      ta.value = value;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+    } catch {}
+  }
+
+  get cleanQueryCount(): number {
+    return this.getCleanQueryList().length;
+  }
+
+  onSearchQueryTextChange(value: string): void {
+    this.searchQueryText = value ?? '';
+  }
+
+  onSearchQueriesChipsChange(value: string[]): void {
+    this.searchQueries = Array.isArray(value) ? value : [];
+    this.enforceSemanticSearchRule();
+  }
+
+  onSemanticToggle(next: boolean): void {
+    this.isSemanticSearch = !!next;
+
+    if (this.isSemanticSearch) {
+      const chips = (this.searchQueries || [])
+        .map(q => (q || '').trim())
+        .filter(q => q.length > 0);
+
+      this.searchQueryText = chips[0] ?? this.searchQueryText ?? '';
+    } else {
+      const chips = this.parseQueries(this.searchQueryText || '');
+      this.searchQueries = chips;
+      this.searchQueryText = '';
+    }
+
+    this.enforceSemanticSearchRule();
+  }
+
+  // ✅ new: from-month changed
+  onDateFromMonthChange(value: Date | null): void {
+    this.selectedDateFromMonth = value ? this.startOfMonth(value) : null;
+    this.normalizeMonthRange();
+  }
+
+  // ✅ new: to-month changed
+  onDateToMonthChange(value: Date | null): void {
+    this.selectedDateToMonth = value ? this.startOfMonth(value) : null;
+    this.normalizeMonthRange();
+  }
+
+  // ✅ new: autocomplete search for law numbers
+  onLawnumberSearch(event: any): void {
+    const query = (event?.query || '').trim();
+
+    if (!query) {
+      this.filteredLawnumberOptions = [];
+      return;
+    }
+
+    const normalizedQuery = this.normalizeForSearch(query);
+
+    const startsWithMatches: string[] = [];
+    const containsMatches: string[] = [];
+
+    for (const value of this.rawLawnumberValues) {
+      if (this.selectedLawnumbers.includes(value)) continue;
+
+      const normalizedValue = this.normalizeForSearch(value);
+
+      if (normalizedValue.startsWith(normalizedQuery)) {
+        startsWithMatches.push(value);
+      } else if (normalizedValue.includes(normalizedQuery)) {
+        containsMatches.push(value);
+      }
+    }
+
+    this.filteredLawnumberOptions = [...startsWithMatches, ...containsMatches].slice(0, 100);
+  }
+
+  private parseQueries(text: string): string[] {
+    const raw = (text || '')
+      .split(/[\r\n,،]+/g)
+      .map(q => q.trim())
+      .filter(q => q.length > 0);
+
+    return Array.from(new Set(raw));
+  }
+
+  get canUseSemanticSearch(): boolean {
+    if (this.isSemanticSearch) return true;
+
+    const chipsCount = (this.searchQueries || [])
+      .map(q => (q || '').trim())
+      .filter(q => q.length > 0).length;
+
+    return chipsCount <= 1;
+  }
+
+  private enforceSemanticSearchRule(): void {
+    const chipsCount = (this.searchQueries || [])
+      .map(q => (q || '').trim())
+      .filter(q => q.length > 0).length;
+
+    if (chipsCount > 1 && this.isSemanticSearch) {
+      this.isSemanticSearch = false;
+    }
+  }
+
+  private getCleanQueryList(): string[] {
+    if (this.isSemanticSearch) {
+      const one = (this.searchQueryText || '').trim();
+      return one.length ? [one] : [];
+    }
+
+    const cleaned = (this.searchQueries || [])
+      .map(q => (q || '').trim())
+      .filter(q => q.length > 0);
+
+    return Array.from(new Set(cleaned));
+  }
+
+  applyFilters(): void {
+    this.enforceSemanticSearchRule();
+    this.normalizeMonthRange();
+    this.currentPage = 1;
+    this._lastFilters = this.buildFiltersPayload();
+    this.fetchPage(this.currentPage);
+  }
+
+  hideResult(id: number): void {
+    this.allCards = this.allCards.filter(x => x.id !== id);
+    this.expandedIds.delete(id);
+  }
+
+  get pagedCards(): SearchResultCard[] {
+    return this.allCards;
+  }
+
+  toggleFilters(): void {
+    this.showFilters = !this.showFilters;
+  }
+
+  openDialogById(cardId: number): void {
+    const card = this.allCards.find(c => c.id === cardId);
+    if (!card) return;
+
+    const mergedTerms = Array.from(
+      new Set([...(this.searchTerms ?? []), ...(this.mandatoryKeywords ?? [])])
+    );
+
+    const titleParts = [card.filename || card.title];
+    const metaParts = [
+      card.doctype || '',
+      card.lawnumber || '',
+      card.date || '',
+      card.page !== undefined && card.page !== null ? `صفحة ${card.page}` : ''
+    ].filter(Boolean);
+
+    this.dialog.open(DescriptionDialogComponent, {
+      width: '900px',
+      maxWidth: '95vw',
+      panelClass: 'custom-dialog-container',
+      autoFocus: false,
+      data: {
+        title: titleParts.join(''),
+        subtitle: metaParts.join(' • '),
+        description: card.snippet,
+        searchTerms: mergedTerms,
+        sourceRanges: card.sourceRanges || [],
+        metadata: {
+          filename: card.filename,
+          doctype: card.doctype,
+          lawnumber: card.lawnumber,
+          date: card.date,
+          subjects: card.subjects || [],
+          signatures: card.signatures || [],
+          page: card.page
+        }
+      }
+    });
+  }
+
+  openDialog(card: any): void {
+    const mergedTerms = Array.from(
+      new Set([...(this.searchTerms ?? []), ...(this.mandatoryKeywords ?? [])])
+    );
+
+    this.dialog.open(DescriptionDialogComponent, {
+      width: '900px',
+      maxWidth: '95vw',
+      panelClass: 'custom-dialog-container',
+      autoFocus: false,
+      data: {
+        title: card.title || card.filename || 'تفاصيل النتيجة',
+        subtitle: card.source || '',
+        description: card.description || card.snippet || '',
+        searchTerms: mergedTerms,
+        sourceRanges: card.sourceRanges || []
+      }
+    });
+  }
+
+  goToAdmin(): void {
+    this.router.navigate(['/admin']);
+  }
+
+  openDocument(chunkId: number): void {
+    this.searchService.openDocument(chunkId).subscribe({
+      next: (res) => {
+        const docType = (res?.type || '').toLowerCase();
+
+        if (docType === 'pdf' && res?.file_url) {
+          const mergedTerms = Array.from(
+            new Set([...(this.searchTerms ?? []), ...(this.mandatoryKeywords ?? [])])
+          );
+
+          const page = this.coercePositivePage(res?.page);
+
+          this.dialog.open(PdfViewerComponent, {
+            width: '90vw',
+            height: '95vh',
+            data: {
+              fileUrl: res.file_url,
+              page,
+              searchTerms: mergedTerms
+            }
+          });
+          return;
+        }
+
+        alert('الملف الحالي غير مدعوم أو لا يحتوي على رابط PDF صالح.');
+      },
+      error: (err) => {
+        console.error('❌ Error opening document:', err);
+        if (err.status === 404) {
+          alert('الملف غير موجود');
+        } else {
+          alert('خطأ في فتح الملف');
+        }
+      }
+    });
+  }
+
+  private buildFiltersPayload() {
+    const dateFrom = this.selectedDateFromMonth
+      ? this.formatDateForBackend(this.startOfMonth(this.selectedDateFromMonth))
+      : null;
+
+    const dateTo = this.selectedDateToMonth
+      ? this.formatDateForBackend(this.endOfMonth(this.selectedDateToMonth))
+      : null;
+
+    return {
+      isSemanticSearch: this.isSemanticSearch,
+      mandatoryKeywords: this.cleanStringList(this.mandatoryKeywords),
+      filename: this.cleanStringList(this.selectedFilenames).length ? this.cleanStringList(this.selectedFilenames) : null,
+      subjects: this.cleanStringList(this.selectedSubjects).length ? this.cleanStringList(this.selectedSubjects) : null,
+      signatures: this.cleanStringList(this.selectedSignatures).length ? this.cleanStringList(this.selectedSignatures) : null,
+      doctype: this.cleanStringList(this.selectedDoctypes).length ? this.cleanStringList(this.selectedDoctypes) : null,
+      lawnumber: this.cleanStringList(this.selectedLawnumbers).length ? this.cleanStringList(this.selectedLawnumbers) : null,
+      date_from: dateFrom,
+      date_to: dateTo
+    };
+  }
+
+  goToPage(page: number): void {
+    if (page < 1 || page > this.totalPages) return;
+    this.currentPage = page;
+
+    if (!this._lastFilters) {
+      this._lastFilters = this.buildFiltersPayload();
+    }
+    this.fetchPage(this.currentPage);
+  }
+
+  private fetchPage(page: number): void {
+    const filters = this._lastFilters ?? this.buildFiltersPayload();
+    const queryList = this.getCleanQueryList();
+
+    this.searchService.searchWithFilters(queryList, filters, page, this.pageSize).subscribe({
+      next: (res) => {
+        const results = res?.results || [];
+
+        this.allCards = results.map((item: any) => {
+          const pageToShow = item?.page_number ?? '-';
+
+          const scoreCandidate =
+            item?.semantic_score ?? item?.score ?? item?.similarity ?? item?.rerank_score ?? item?.distance;
+
+          const score =
+            typeof scoreCandidate === 'number' && !Number.isNaN(scoreCandidate)
+              ? scoreCandidate
+              : null;
+
+          const title = item?.filename || 'وثيقة قانونية';
+          const source = this.buildSourceLabel(item);
+
+          return {
+            id: item.id,
+            title,
+            source,
+            page: pageToShow,
+            score,
+            snippet: item?.chunk || '',
+            filename: item?.filename || '',
+            doctype: item?.doctype || '',
+            lawnumber: item?.lawnumber || '',
+            date: item?.date || '',
+            subjects: Array.isArray(item?.subjects) ? item.subjects : [],
+            signatures: Array.isArray(item?.signatures) ? item.signatures : [],
+            sourceRanges: Array.isArray(item?.source_ranges) ? item.source_ranges : []
+          } as SearchResultCard;
+        });
+
+        this.expandedIds.clear();
+
+        this.totalResults = res?.total_results ?? (results.length ?? 0);
+        this.totalPages = res?.total_pages ?? (Math.ceil(this.totalResults / this.pageSize) || 1);
+        this.expandedQueries = Array.isArray(res?.expanded_queries) ? res.expanded_queries : [];
+
+        const combinedSearchTerms = [
+          ...queryList,
+          ...(this.expandedQueries || []),
+          ...(this.mandatoryKeywords || [])
+        ]
+          .map((t: string) => (t || '').trim())
+          .filter((t: string) => t.length > 0);
+
+        this.searchTerms = Array.from(new Set(combinedSearchTerms));
+      },
+      error: (err) => {
+        console.error('❌ Erreur backend :', err);
+        this.allCards = [];
+        this.totalResults = 0;
+        this.totalPages = 1;
+      }
+    });
+  }
+
+  resetFilters(): void {
+    this.mandatoryKeywords = [];
+    this.selectedSubjects = [];
+    this.selectedSignatures = [];
+    this.selectedFilenames = [];
+    this.selectedDoctypes = [];
+    this.selectedLawnumbers = [];
+    this.filteredLawnumberOptions = [];
+
+    this.selectedDateFromMonth = null;
+    this.selectedDateToMonth = null;
+
+    this.searchQueries = [];
+    this.searchQueryText = '';
+    this.isSemanticSearch = false;
+
+    this.currentPage = 1;
+    this.totalResults = 0;
+    this.totalPages = 1;
+    this.allCards = [];
+    this.searchTerms = [];
+    this.expandedQueries = [];
+    this._lastFilters = null;
+
+    this.expandedIds.clear();
+  }
+
+  get visiblePages(): number[] {
+    const maxVisible = 15;
+    const pages: number[] = [];
+    let startPage = Math.max(this.currentPage - Math.floor(maxVisible / 2), 1);
+    let endPage = startPage + maxVisible - 1;
+
+    if (endPage > this.totalPages) {
+      endPage = this.totalPages;
+      startPage = Math.max(endPage - maxVisible + 1, 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+    return pages;
+  }
+
+  private downloadBlob(blob: Blob, filename: string): void {
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  }
+
+
+  exportFull(): void {
+    if (this.totalResults === 0) return;
+
+    const queries = this.getCleanQueryList();
+    const filters = this._lastFilters ?? this.buildFiltersPayload();
+
+    this.isExportingFull = true;
+
+    this.searchService.exportFull(queries, filters).subscribe({
+      next: (blob) => {
+        const ts = new Date().toISOString().replace(/[:.]/g, '-');
+        this.downloadBlob(blob, `تصدير_كامل_${ts}.txt`);
+        this.isExportingFull = false;
+      },
+      error: (err) => {
+        console.error('❌ Export full failed:', err);
+        alert('حدث خطأ أثناء التصدير الكامل');
+        this.isExportingFull = false;
+      }
+    });
+  }
+
+
+	private loadFilterOptions(): void {
+	  this.filtersLoading = true;
+	  this.filtersLoadError = '';
+
+	  this.searchService.getFilterOptions().subscribe({
+		next: (res: any) => {
+		  const backendSubjects: string[] = Array.isArray(res?.subjects) ? res.subjects : [];
+		  const backendSignatures: string[] = Array.isArray(res?.signatures) ? res.signatures : [];
+		  const backendFilenames: string[] = Array.isArray(res?.filenames) ? res.filenames : [];
+		  const backendDoctypes: string[] = Array.isArray(res?.doctypes) ? res.doctypes : [];
+		  const backendLawnumbers: string[] = Array.isArray(res?.lawnumbers) ? res.lawnumbers : [];
+		  const dateBounds = res?.date_bounds || {};
+
+		  this.subjectOptions = this.mergeOptions(LEGAL_SUBJECTS, backendSubjects);
+		  this.doctypeOptions = this.mergeOptions(DOCUMENT_TYPES, backendDoctypes);
+		  this.signatureOptions = this.toOptions(backendSignatures);
+		  this.filenameOptions = this.toOptions(backendFilenames);
+
+		  this.rawLawnumberValues = Array.from(
+			new Set(
+			  backendLawnumbers
+				.map((x: string) => (x || '').trim())
+				.filter((x: string) => !!x)
+			)
+		  ).sort((a: string, b: string) => a.localeCompare(b, 'ar'));
+
+		  this.lawnumberOptions = this.rawLawnumberValues.map((v: string) => ({ label: v, value: v }));
+		  this.filteredLawnumberOptions = [];
+
+		  this.minDate = this.parseBackendDate(dateBounds?.min) ?? null;
+		  this.maxDate = this.parseBackendDate(dateBounds?.max) ?? null;
+
+		  this.filtersLoading = false;
+		},
+		error: (err) => {
+		  console.error('❌ Failed to load filter options:', err);
+		  this.filtersLoadError = 'تعذر تحميل خيارات الفلاتر من الخادم.';
+		  this.subjectOptions = [...LEGAL_SUBJECTS];
+		  this.doctypeOptions = [...DOCUMENT_TYPES];
+		  this.signatureOptions = [];
+		  this.filenameOptions = [];
+		  this.rawLawnumberValues = [];
+		  this.lawnumberOptions = [];
+		  this.filteredLawnumberOptions = [];
+		  this.minDate = null;
+		  this.maxDate = null;
+		  this.filtersLoading = false;
+		}
+	  });
+	}
+  
+  
+  
+
+  private mergeOptions(preferred: SelectOption[], backendValues: string[]): SelectOption[] {
+    const map = new Map<string, SelectOption>();
+
+    for (const item of preferred || []) {
+      const value = (item?.value || '').trim();
+      if (!value) continue;
+      map.set(value, { label: item.label, value: item.value });
+    }
+
+    for (const raw of backendValues || []) {
+      const value = (raw || '').trim();
+      if (!value) continue;
+      if (!map.has(value)) {
+        map.set(value, { label: value, value });
+      }
+    }
+
+    const preferredValues = new Set((preferred || []).map(x => x.value));
+    const preferredPart = (preferred || []).filter(x => map.has(x.value));
+    const extraPart = Array.from(map.values())
+      .filter(x => !preferredValues.has(x.value))
+      .sort((a, b) => a.label.localeCompare(b.label, 'ar'));
+
+    return [...preferredPart, ...extraPart];
+  }
+
+  private toOptions(values: string[]): SelectOption[] {
+    return Array.from(
+      new Set((values || []).map(x => (x || '').trim()).filter(Boolean))
+    )
+      .sort((a, b) => a.localeCompare(b, 'ar'))
+      .map(v => ({ label: v, value: v }));
+  }
+
+	private parseBackendDate(value: string | null | undefined): Date | null {
+	  if (!value) return null;
+
+	  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+	  if (m) {
+		const y = Number(m[1]);
+		const mo = Number(m[2]) - 1;
+		const d = Number(m[3]);
+		return new Date(y, mo, d);
+	  }
+
+	  const parsed = new Date(value);
+	  return Number.isNaN(parsed.getTime()) ? null : parsed;
+	}
+
+  private formatDateForBackend(date: Date): string {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+
+  private buildSourceLabel(item: any): string {
+    const parts: string[] = [];
+
+    if (item?.doctype) parts.push(item.doctype);
+    if (item?.lawnumber) parts.push(item.lawnumber);
+    if (item?.date) parts.push(item.date);
+
+    return parts.length ? parts.join(' • ') : 'وثيقة قانونية';
+  }
+
+  private cleanStringList(values: string[] | null | undefined): string[] {
+    return Array.from(
+      new Set((values || []).map(v => (v || '').trim()).filter(v => v.length > 0))
+    );
+  }
+
+  private coercePositivePage(value: any): number {
+    const n = Number(value);
+    return Number.isFinite(n) && n > 0 ? n : 1;
+  }
+
+  // -------------------------
+  // helpers for month range
+  // -------------------------
+
+  private normalizeMonthRange(): void {
+    if (!this.selectedDateFromMonth || !this.selectedDateToMonth) return;
+
+    const fromKey = this.monthKey(this.selectedDateFromMonth);
+    const toKey = this.monthKey(this.selectedDateToMonth);
+
+    if (fromKey > toKey) {
+      const tmp = this.selectedDateFromMonth;
+      this.selectedDateFromMonth = this.selectedDateToMonth;
+      this.selectedDateToMonth = tmp;
+    }
+  }
+
+  private monthKey(date: Date): number {
+    return date.getFullYear() * 12 + date.getMonth();
+  }
+
+  private startOfMonth(date: Date): Date {
+    return new Date(date.getFullYear(), date.getMonth(), 1);
+  }
+
+  private endOfMonth(date: Date): Date {
+    return new Date(date.getFullYear(), date.getMonth() + 1, 0);
+  }
+
+  // -------------------------
+  // helpers for lawnumber autocomplete
+  // -------------------------
+
+  private normalizeForSearch(value: string): string {
+    return (value || '')
+      .toLowerCase()
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+}
+
+######
+
+C:\Users\Abderrahman\Desktop\new_legal_ai\Froentend_BO\DocSearchFrontEnd\src\app\constants\filters-data.ts
+
+export type SelectOption = { label: string; value: string };
+
+/**
+ * These constants are used as curated ordering/display helpers.
+ * Real available values are still loaded dynamically from /filters/options.
+ * Values must remain strings because backend filters subjects/doctypes by text.
+ */
+export const LEGAL_SUBJECTS: SelectOption[] = [
+    { label: '1. القانون الدستوري والمؤسسات الدستورية', value: '1. القانون الدستوري والمؤسسات الدستورية' },
+    { label: '2. تنظيم القضاء والمنظومة القضائية', value: '2. تنظيم القضاء والمنظومة القضائية' },
+    { label: '3. قانون المسطرة المدنية والمساطر التجارية؛ التحكيم والوساطة الاتفاقية', value: '3. قانون المسطرة المدنية والمساطر التجارية؛ التحكيم والوساطة الاتفاقية' },
+    { label: '4. القانون الإداري والوظيفة العمومية', value: '4. القانون الإداري والوظيفة العمومية' },
+    { label: '5. الجماعات الترابية: الجهات والعمالات والأقاليم والجماعات', value: '5. الجماعات الترابية: الجهات والعمالات والأقاليم والجماعات' },
+    { label: '6. المالية العمومية والجبايات', value: '6. المالية العمومية والجبايات' },
+    { label: '7. الصفقات العمومية والشراكة بين القطاعين العام والخاص', value: '7. الصفقات العمومية والشراكة بين القطاعين العام والخاص' },
+    { label: '8. الشفافية والحق في الحصول على المعلومات والنزاهة ومكافحة الفساد', value: '8. الشفافية والحق في الحصول على المعلومات والنزاهة ومكافحة الفساد' },
+    { label: '9. القانون المدني – قانون الالتزامات والعقود', value: '9. القانون المدني – قانون الالتزامات والعقود' },
+    { label: '10. مدونة الأسرة (المُدوّنة)', value: '10. مدونة الأسرة (المُدوّنة)' },
+    { label: '11. الحقوق العينية والعقار', value: '11. الحقوق العينية والعقار' },
+    { label: '12. أنظمة الأراضي والحيازة القروية', value: '12. أنظمة الأراضي والحيازة القروية' },
+    { label: '13. قانون الأعمال والشركات والتجارة (مدونة التجارة)', value: '13. قانون الأعمال والشركات والتجارة (مدونة التجارة)' },
+    { label: '14. حرية الأسعار والمنافسة وحماية المستهلك', value: '14. حرية الأسعار والمنافسة وحماية المستهلك' },
+    { label: '15. قانون البنوك وسوق الرساميل والتأمينات', value: '15. قانون البنوك وسوق الرساميل والتأمينات' },
+    { label: '16. مدونة الشغل والحماية الاجتماعية', value: '16. مدونة الشغل والحماية الاجتماعية' },
+    { label: '17. الجمارك والتجارة الخارجية', value: '17. الجمارك والتجارة الخارجية' },
+    { label: '18. الطاقة والمعادن والموارد الطبيعية', value: '18. الطاقة والمعادن والموارد الطبيعية' },
+    { label: '19. البيئة والتنمية المستدامة', value: '19. البيئة والتنمية المستدامة' },
+    { label: '20. التعمير والإسكان والبناء', value: '20. التعمير والإسكان والبناء' },
+    { label: '21. النقل واللوجستيك والبنيات التحتية', value: '21. النقل واللوجستيك والبنيات التحتية' },
+    { label: '22. الاتصالات والتحول الرقمي وحماية المعطيات ذات الطابع الشخصي', value: '22. الاتصالات والتحول الرقمي وحماية المعطيات ذات الطابع الشخصي' },
+    { label: '23. الإعلام والصحافة والسمعي البصري', value: '23. الإعلام والصحافة والسمعي البصري' },
+    { label: '24. التربية والتكوين والبحث العلمي والثقافة', value: '24. التربية والتكوين والبحث العلمي والثقافة' },
+    { label: '25. الصحة ومدونة الأدوية والصيدلة', value: '25. الصحة ومدونة الأدوية والصيدلة' },
+    { label: '26. الفلاحة والصيد البحري والسلامة الصحية للمنتجات الغذائية', value: '26. الفلاحة والصيد البحري والسلامة الصحية للمنتجات الغذائية' },
+    { label: '27. الشؤون الدينية والأوقاف (الحبوس)', value: '27. الشؤون الدينية والأوقاف (الحبوس)' },
+    { label: '28. القانون الدولي والجنسية والهجرة', value: '28. القانون الدولي والجنسية والهجرة' },
+    { label: '29. أخرى', value: '29. أخرى' }
+];
+
+export const DOCUMENT_TYPES: SelectOption[] = [
+  { label: 'ظهير شريف', value: 'ظهير' }, 
+  { label: 'قانون', value: 'قانون' }, 
+  { label: 'مرسوم', value: 'مرسوم' },
+  { label: 'قرار', value: 'قرار' },
+  { label: 'تقرير', value: 'تقرير' },
+  { label: 'مذكرة', value: 'مذكرة' },   
+  { label: 'مقرر', value: 'مقرر' }, 
+  { label: 'ملحق', value: 'ملحق' },
+  { label: 'رأي', value: 'رأي' } 
+];
+
+######
+
+C:\Users\Abderrahman\Desktop\new_legal_ai\Froentend_BO\DocSearchFrontEnd\src\app\models\card-model.spec.ts
+
+import { CardModel } from './card-model';
+
+describe('CardModel', () => {
+  it('should create an instance', () => {
+    expect(new CardModel()).toBeTruthy();
+  });
+});
+
+
+######
+
+C:\Users\Abderrahman\Desktop\new_legal_ai\Froentend_BO\DocSearchFrontEnd\src\app\models\card-model.ts
+
+export class CardModel {
+  id!: number; 
+  title!: string;
+  description!: string;
+}
+
+
+######
+
+C:\Users\Abderrahman\Desktop\new_legal_ai\Froentend_BO\DocSearchFrontEnd\src\app\pipes\highlight.pipe.spec.ts
+
+import { HighlightPipe } from './highlight.pipe';
+
+describe('HighlightPipe', () => {
+  it('create an instance', () => {
+    const pipe = new HighlightPipe();
+    expect(pipe).toBeTruthy();
+  });
+});
+
+
+
+######
+
+C:\Users\Abderrahman\Desktop\new_legal_ai\Froentend_BO\DocSearchFrontEnd\src\app\pipes\highlight.pipe.ts
+
+import { Pipe, PipeTransform } from '@angular/core';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+
+@Pipe({
+  name: 'highlight'
+})
+export class HighlightPipe implements PipeTransform {
+
+  constructor(private sanitizer: DomSanitizer) {}
+
+  transform(value: string, search: string): SafeHtml {
+    if (!search || !value) {
+      return this.sanitizer.bypassSecurityTrustHtml(value);
+    }
+    
+    const regex = new RegExp(this.escapeRegExp(search), 'gi');
+    const highlighted = value.replace(regex, match => 
+      `<span class="highlight">${match}</span>`
+    );
+    
+    return this.sanitizer.bypassSecurityTrustHtml(highlighted);
+  }
+
+  private escapeRegExp(text: string): string {
+    return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+}
+
+
+######
+
+C:\Users\Abderrahman\Desktop\new_legal_ai\Froentend_BO\DocSearchFrontEnd\src\app\services\admin.service.ts
+
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+export type UpdateDocumentPayload = {
+  filename: string;
+  doctype?: string | null;
+  lawnumber?: string | null;
+  date?: string | null;
+  subjects?: string[] | null;
+  signatures?: string[] | null;
+  path?: string | null;
+};
+
+@Injectable({
+  providedIn: 'root'
+})
+export class AdminService {
+  private apiUrl = 'http://localhost:5000';
+
+  constructor(private http: HttpClient) {}
+
+  startProcessDocuments(files: File[]): Observable<any> {
+    const form = new FormData();
+    for (const f of files) {
+      form.append('files', f, f.name);
+    }
+    form.append('source', 'admin-ui');
+    return this.http.post(`${this.apiUrl}/admin/process`, form);
+  }
+
+  openProgressStream(jobId: string): EventSource {
+    return new EventSource(`${this.apiUrl}/admin/progress/${jobId}`);
+  }
+
+  getAdminStatus(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/admin/status`);
+  }
+
+  getJobSnapshot(jobId: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/admin/job/${jobId}`);
+  }
+
+  getDocumentsSummary(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/admin/documents/summary`);
+  }
+
+  updateDocumentMeta(payload: UpdateDocumentPayload): Observable<any> {
+    return this.http.post(`${this.apiUrl}/admin/documents/update`, payload);
+  }
+
+  getFilterOptions(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/filters/options`);
+  }
+}
+
+######
+
+C:\Users\Abderrahman\Desktop\new_legal_ai\Froentend_BO\DocSearchFrontEnd\src\app\services\card.service.spec.ts
+
+import { TestBed } from '@angular/core/testing';
+
+import { CardService } from './card.service';
+
+describe('CardService', () => {
+  let service: CardService;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(CardService);
+  });
+
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
+});
+
+
+######
+
+C:\Users\Abderrahman\Desktop\new_legal_ai\Froentend_BO\DocSearchFrontEnd\src\app\services\card.service.ts
+
+import { Injectable } from '@angular/core';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class CardService {
+
+   getCardsData() {
+        return [
+            {
+                id: '1000',
+                title: 'Bamboo Watch',
+                description: 'Product Description'
+            },
+            {
+                id: '1000',
+                title: 'Bamboo Watch',
+                description: 'Product Description'
+            }
+          ];
+        }
+   getCards() {
+    return Promise.resolve(this.getCardsData());
+}
+
+  constructor() { }
+}
+
+
+######
+
+C:\Users\Abderrahman\Desktop\new_legal_ai\Froentend_BO\DocSearchFrontEnd\src\app\services\search.service.ts
+
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+export type LegalFiltersPayload = {
+  isSemanticSearch?: boolean;
+  mandatoryKeywords?: string[];
+  filename?: string[] | null;
+  subjects?: string[] | null;
+  signatures?: string[] | null;
+  doctype?: string[] | null;
+  lawnumber?: string[] | null;
+  date?: { from?: string | null; to?: string | null } | null;
+  date_from?: string | null;
+  date_to?: string | null;
+};
+
+@Injectable({
+  providedIn: 'root'
+})
+export class SearchService {
+  private apiUrl = 'http://localhost:5000';
+
+  constructor(private http: HttpClient) {}
+
+  getChunk(id: number): Observable<any> {
+    return this.http.get(`${this.apiUrl}/chunk/${id}`);
+  }
+
+  openDocument(chunkId: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/open/${chunkId}`);
+  }
+
+  openPdf(chunkId: number): Observable<any> {
+    return this.openDocument(chunkId);
+  }
+
+  getFilterOptions(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/filters/options`);
+  }
+
+  searchWithFilters(
+    queries: string[] | string,
+    filters: LegalFiltersPayload,
+    page: number,
+    pageSize: number
+  ): Observable<any> {
+    const qList = Array.isArray(queries)
+      ? queries
+      : ((queries || '').trim() ? [(queries || '').trim()] : []);
+
+    const body: any = {
+      queries: qList,
+      query: Array.isArray(queries) ? '' : (queries || ''),
+      ...filters,
+      page,
+      page_size: pageSize
+    };
+
+    return this.http.post<any>(`${this.apiUrl}/search-with-filters`, body);
+  }
+
+
+  exportFull(queries: string[], filters: LegalFiltersPayload): Observable<Blob> {
+    const body: any = {
+      queries,
+      query: '',
+      ...filters
+    };
+    return this.http.post(`${this.apiUrl}/export/full`, body, { responseType: 'blob' });
+  }
+
+  searchAdvanced(
+    query: string,
+    page: number,
+    pageSize: number,
+    isSemanticSearch: boolean = false
+  ): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/search-advanced`, {
+      params: {
+        q: query,
+        page: String(page),
+        page_size: String(pageSize),
+        isSemanticSearch: String(isSemanticSearch)
+      }
+    });
+  }
+}
+
+######
+
+C:\Users\Abderrahman\Desktop\new_legal_ai\Froentend_BO\DocSearchFrontEnd\src\assets\.gitkeep
+
+
+
+######
+

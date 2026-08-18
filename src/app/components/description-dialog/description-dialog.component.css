@@ -1,0 +1,86 @@
+.dialog-container {
+  padding: 0;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #e0e0e0;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.dialog-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.close-button {
+  color: #666;
+}
+
+.dialog-content {
+  padding: 20px 24px;
+  max-height: 80vh;
+  overflow-y: auto;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.description-text {
+  white-space: pre-line;
+  text-align: right;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.description-text pre {
+  margin: 0;
+  font-family: inherit;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.close-btn {
+  margin: 8px;
+  padding: 8px 24px;
+  font-weight: 500;
+}
+
+/* Scrollbar styling */
+.dialog-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dialog-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.dialog-content::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.dialog-content::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.highlight {
+  background-color: yellow;
+  color: black;
+  font-weight: bold;
+}
+
+/* Optional: Adjust the pre tag to maintain formatting */
+pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-family: inherit;
+  margin: 0;
+}

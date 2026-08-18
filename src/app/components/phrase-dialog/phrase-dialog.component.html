@@ -1,0 +1,31 @@
+<div class="dialog-container">
+  <div class="dialog-header">
+    <h2 mat-dialog-title>{{ data.phrase }}</h2>
+    <button mat-icon-button (click)="dialogRef.close()" class="close-button">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-dialog-content class="dialog-content">
+    <div class="description-text" dir="rtl">
+      <div *ngIf="data.lawData">
+        <p>{{ data.lawData.results[0].chunk }}</p>
+      </div>
+      <div *ngIf="!data.lawData">
+        <p>Aucune donnée trouvée pour ce numéro de loi.</p>
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <!-- Footer -->
+  <mat-dialog-actions class="dialog-footer" align="center">
+    <button 
+      mat-raised-button 
+      color="primary" 
+      (click)="openPdf(data.lawData.results[0].id)" 
+      [disabled]="!data.lawData"
+    >
+      فتح الملف
+    </button>
+  </mat-dialog-actions>
+</div>

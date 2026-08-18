@@ -1,0 +1,636 @@
+.admin-page {
+  padding: 20px;
+  background: linear-gradient(180deg, rgba(25,118,210,0.06), rgba(0,0,0,0) 45%);
+  min-height: calc(100vh - 20px);
+  direction: rtl;
+}
+
+/* ✅ less wide topbar (centered) */
+.topbar {
+  width: 75%;
+  margin: 0 auto 24px auto;
+  padding: 16px 22px;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.10);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.topbar-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.topbar-title .shield {
+  font-size: 34px;
+  width: 34px;
+  height: 34px;
+  color: #1976d2;
+}
+
+.title-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.title-main {
+  font-weight: 900;
+  font-size: 17px;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.back-btn {
+  border-radius: 12px;
+  font-weight: 800;
+}
+
+/* ✅ single centered column */
+.grid {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.card {
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+/* ✅ centered + wider upload card */
+.upload-card {
+  width: 70%;
+  max-width: 950px;
+}
+
+.dropzone {
+  border-radius: 16px;
+  border: 2px dashed rgba(25,118,210,0.35);
+  background: rgba(25,118,210,0.04);
+  padding: 30px 24px;
+  transition: all 160ms ease;
+  cursor: pointer;
+}
+
+.dropzone.dragging {
+  border-color: rgba(211,47,47,0.55);
+  background: rgba(211,47,47,0.06);
+  transform: translateY(-1px);
+}
+
+.dz-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+  text-align: center;
+}
+
+.dz-icon {
+  font-size: 44px;
+  width: 44px;
+  height: 44px;
+  color: #1976d2;
+}
+
+.dz-text .dz-main {
+  font-weight: 900;
+  font-size: 16px;
+}
+
+.dz-text .dz-sub {
+  margin-top: 6px;
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+.dz-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 6px;
+}
+
+.dz-actions button {
+  border-radius: 12px;
+  font-weight: 800;
+}
+
+.progress {
+  margin-top: 16px;
+}
+
+.progress-text {
+  margin-top: 10px;
+  font-weight: 800;
+  opacity: 0.8;
+}
+
+/* ✅ greenish message */
+.server-message {
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(46,125,50,0.10);
+  color: #2e7d32;
+  font-weight: 900;
+}
+
+.server-message mat-icon {
+  color: #2e7d32;
+}
+
+.server-message.success {
+  background: rgba(46,125,50,0.14);
+}
+
+/* ===============================
+   Selected Files Preview
+================================ */
+.selected-files {
+  margin-top: 22px;
+  background: rgba(0,0,0,0.03);
+  padding: 16px;
+  border-radius: 16px;
+}
+
+.selected-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 900;
+  margin-bottom: 14px;
+}
+
+.selected-header mat-icon {
+  color: #1976d2;
+}
+
+.selected-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.selected-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  padding: 10px 14px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+.file-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-width: 85%;
+}
+
+.file-name {
+  font-weight: 800;
+  word-break: break-word;
+}
+
+.file-size {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+/* ===============================
+   Process Section
+================================ */
+.process-section {
+  margin-top: 22px;
+  padding: 16px;
+  border-radius: 16px;
+  background: rgba(25,118,210,0.05);
+}
+
+.process-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 900;
+  margin-bottom: 12px;
+}
+
+.process-header mat-icon {
+  color: #1976d2;
+}
+
+.process-btn {
+  border-radius: 12px;
+  font-weight: 900;
+  padding: 10px 16px;
+}
+
+.admin-page {
+  padding: 20px;
+  background: linear-gradient(180deg, rgba(25,118,210,0.06), rgba(0,0,0,0) 45%);
+  min-height: calc(100vh - 20px);
+  direction: rtl;
+}
+
+/* ✅ less wide topbar (centered) */
+.topbar {
+  width: 75%;
+  margin: 0 auto 24px auto;
+  padding: 16px 22px;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.10);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.topbar-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.topbar-title .shield {
+  font-size: 34px;
+  width: 34px;
+  height: 34px;
+  color: #1976d2;
+}
+
+.title-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.title-main {
+  font-weight: 900;
+  font-size: 17px;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.back-btn {
+  border-radius: 12px;
+  font-weight: 800;
+}
+
+/* ✅ centered column that can stack multiple cards */
+.grid {
+  display: flex;
+  flex-direction: column;   /* ✅ CHANGED: stack cards */
+  align-items: center;      /* ✅ keep centered */
+  justify-content: flex-start;
+  width: 100%;
+  gap: 18px;                /* ✅ spacing between cards */
+}
+
+.card {
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+/* ✅ centered + wider upload card */
+.upload-card {
+  width: 70%;
+  max-width: 950px;
+}
+
+.dropzone {
+  border-radius: 16px;
+  border: 2px dashed rgba(25,118,210,0.35);
+  background: rgba(25,118,210,0.04);
+  padding: 30px 24px;
+  transition: all 160ms ease;
+  cursor: pointer;
+}
+
+.dropzone.dragging {
+  border-color: rgba(211,47,47,0.55);
+  background: rgba(211,47,47,0.06);
+  transform: translateY(-1px);
+}
+
+.dz-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+  text-align: center;
+}
+
+.dz-icon {
+  font-size: 44px;
+  width: 44px;
+  height: 44px;
+  color: #1976d2;
+}
+
+.dz-text .dz-main {
+  font-weight: 900;
+  font-size: 16px;
+}
+
+.dz-text .dz-sub {
+  margin-top: 6px;
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+.dz-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 6px;
+}
+
+.dz-actions button {
+  border-radius: 12px;
+  font-weight: 800;
+}
+
+.progress {
+  margin-top: 16px;
+}
+
+.progress-text {
+  margin-top: 10px;
+  font-weight: 800;
+  opacity: 0.8;
+}
+
+/* ✅ greenish message */
+.server-message {
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(46,125,50,0.10);
+  color: #2e7d32;
+  font-weight: 900;
+}
+
+.server-message mat-icon {
+  color: #2e7d32;
+}
+
+.server-message.success {
+  background: rgba(46,125,50,0.14);
+}
+
+/* ===============================
+   Selected Files Preview
+================================ */
+.selected-files {
+  margin-top: 22px;
+  background: rgba(0,0,0,0.03);
+  padding: 16px;
+  border-radius: 16px;
+}
+
+.selected-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 900;
+  margin-bottom: 14px;
+}
+
+.selected-header mat-icon {
+  color: #1976d2;
+}
+
+.selected-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.selected-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  padding: 10px 14px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+}
+
+.file-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-width: 85%;
+}
+
+.file-name {
+  font-weight: 800;
+  word-break: break-word;
+}
+
+.file-size {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+/* ===============================
+   Process Section
+================================ */
+.process-section {
+  margin-top: 22px;
+  padding: 16px;
+  border-radius: 16px;
+  background: rgba(25,118,210,0.05);
+}
+
+.process-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 900;
+  margin-bottom: 12px;
+}
+
+.process-header mat-icon {
+  color: #1976d2;
+}
+
+.process-btn {
+  border-radius: 12px;
+  font-weight: 900;
+  padding: 10px 16px;
+}
+
+/* =========================================================
+   ✅ NEW: Books card — matches your centered modern style
+========================================================= */
+
+/* same width as upload card for symmetry */
+.books-card {
+  width: 70%;
+  max-width: 950px;
+}
+
+/* toolbar row */
+.books-toolbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+/* stats pills */
+.stats {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.stat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(25,118,210,0.06);
+  border: 1px solid rgba(25,118,210,0.18);
+  font-weight: 900;
+}
+
+.stat-pill mat-icon {
+  color: #1976d2;
+}
+
+/* actions right side */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.filter-field {
+  width: min(420px, 85vw);
+}
+
+/* loading bar */
+.books-loading {
+  margin: 10px 0 14px;
+}
+
+/* table container */
+.table-wrap {
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08);
+  background: #ffffff;
+}
+
+.books-table {
+  width: 100%;
+}
+
+/* header row look */
+.books-table .mat-mdc-header-row {
+  background: rgba(25,118,210,0.06);
+}
+
+.books-table .mat-mdc-header-cell {
+  font-weight: 900;
+  color: rgba(0,0,0,0.82);
+}
+
+/* body cells */
+.books-table .mat-mdc-cell {
+  vertical-align: middle;
+}
+
+/* book title emphasis */
+.book-title {
+  font-weight: 900;
+  line-height: 1.3;
+}
+
+/* compact inputs inside cells */
+.cell-field {
+  width: 100%;
+}
+
+.cell-field .mat-mdc-form-field-subscript-wrapper {
+  display: none; /* remove extra hint space */
+}
+
+.pages-badge {
+  display: inline-block;
+  min-width: 46px;
+  text-align: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(0,0,0,0.03);
+  border: 1px solid rgba(0,0,0,0.10);
+  font-weight: 900;
+}
+
+.actions-col {
+  width: 110px;
+  text-align: center;
+  position: relative;
+  white-space: nowrap;
+}
+
+.dirty-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ff9800;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+/* empty state */
+.empty {
+  padding: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  opacity: 0.78;
+}
+
+.empty mat-icon {
+  color: rgba(0,0,0,0.45);
+}
+
+/* responsive: make cards wider on small screens */
+@media (max-width: 900px) {
+  .topbar { width: 92%; }
+  .upload-card, .books-card { width: 92%; }
+}

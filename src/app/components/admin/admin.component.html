@@ -1,0 +1,135 @@
+<div class="admin-page">
+  <div class="topbar">
+    <div class="topbar-title">
+      <mat-icon class="shield">admin_panel_settings</mat-icon>
+      <div class="title-text">
+        <div class="title-main">لوحة إدارة الوثائق القانونية</div>
+      </div>
+    </div>
+
+    <div class="topbar-actions">
+      <button mat-stroked-button color="primary" class="back-btn" (click)="backToSearch()">
+        <mat-icon>arrow_back</mat-icon>
+        الرجوع للبحث
+      </button>
+    </div>
+  </div>
+
+  <div class="grid">
+    <mat-card class="card upload-card">
+      <mat-card-header>
+        <mat-card-title>رفع ملفات قانونية PDF</mat-card-title>
+        <mat-card-subtitle>الامتداد المدعوم حاليًا: PDF فقط</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div
+          class="dropzone"
+          [class.dragging]="dragging"
+          (dragover)="onDragOver($event)"
+          (dragleave)="onDragLeave($event)"
+          (drop)="onDrop($event)">
+          <div class="dz-inner">
+            <mat-icon class="dz-icon">cloud_upload</mat-icon>
+            <div class="dz-text">
+              <div class="dz-main">اسحب ملفات PDF هنا أو اخترها من جهازك</div>
+              <div class="dz-sub">يتم قبول الرفع، لكن الإدماج التلقائي للبيانات غير مفعّل حالياً.</div>
+            </div>
+
+            <div class="dz-actions">
+              <input #picker type="file" multiple accept=".pdf" hidden (change)="onFilesPicked($event)" />
+
+              <button mat-raised-button color="primary" (click)="onBrowseFiles(picker)" [disabled]="isProcessing">
+                <mat-icon>attach_file</mat-icon>
+                اختيار ملفات
+              </button>
+
+              <button mat-stroked-button color="warn" (click)="clearAll()" [disabled]="!selected.length || isProcessing">
+                <mat-icon>delete_sweep</mat-icon>
+                تفريغ
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="selected-files" *ngIf="selected.length">
+          <div class="selected-header">
+            <mat-icon>picture_as_pdf</mat-icon>
+            <span>الملفات المختارة ({{ selected.length }})</span>
+          </div>
+
+          <div class="selected-list">
+            <div class="selected-item" *ngFor="let item of selected; let i = index">
+              <div class="file-info">
+                <span class="file-name">{{ item.name }}</span>
+                <span class="file-size">{{ item.sizeLabel }}</span>
+              </div>
+
+              <button
+                mat-icon-button
+                color="warn"
+                (click)="remove(i)"
+                [disabled]="isProcessing"
+                matTooltip="إزالة">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="process-section">
+          <div class="process-header">
+            <mat-icon>settings_suggest</mat-icon>
+            <span>بعد اختيار الملفات، اضغط لرفعها</span>
+          </div>
+
+          <button
+            mat-raised-button
+            color="primary"
+            class="process-btn"
+            (click)="process()"
+            [disabled]="!selected.length || isProcessing">
+            <mat-icon>upload_file</mat-icon>
+            رفع الملفات
+          </button>
+
+          <div class="progress" *ngIf="isProcessing">
+            <div class="progress-text">جارٍ التواصل مع الخادم...</div>
+
+            <div class="doc-progress" *ngIf="progressDocs.length">
+              <div class="doc-row" *ngFor="let d of progressDocs">
+                <div class="doc-title">
+                  <mat-icon *ngIf="d.status==='done'">check_circle</mat-icon>
+                  <mat-icon *ngIf="d.status==='failed'">error</mat-icon>
+                  <mat-icon *ngIf="d.status==='processing'">autorenew</mat-icon>
+                  <mat-icon *ngIf="d.status==='queued'">hourglass_empty</mat-icon>
+
+                  <span class="doc-name">{{ d.name }}</span>
+                </div>
+
+                <mat-progress-bar
+                  [mode]="d.status==='queued' ? 'indeterminate' : 'determinate'"
+                  [value]="d.percent">
+                </mat-progress-bar>
+
+                <div class="doc-msg">{{ d.message }}</div>
+              </div>
+            </div>
+
+            <div *ngIf="!progressDocs.length">
+              <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            </div>
+          </div>
+
+          <div class="server-message success" *ngIf="doneMessage">
+            <mat-icon>verified</mat-icon>
+            <span>{{ doneMessage }}</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+
+	
+  </div>
+</div>

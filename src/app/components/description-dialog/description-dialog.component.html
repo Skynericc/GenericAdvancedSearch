@@ -1,0 +1,33 @@
+<div class="dialog-container">
+  <div class="dialog-header">
+    <div>
+      <h2 mat-dialog-title>{{ data.title }}</h2>
+      <div class="dialog-subtitle" *ngIf="data.subtitle">{{ data.subtitle }}</div>
+    </div>
+
+    <button mat-icon-button (click)="dialogRef.close()" class="close-button">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-dialog-content class="dialog-content">
+    <div class="dialog-meta" dir="rtl" *ngIf="data.metadata">
+      <div *ngIf="data.metadata.doctype"><strong>نوع الوثيقة:</strong> {{ data.metadata.doctype }}</div>
+      <div *ngIf="data.metadata.lawnumber"><strong>رقم القانون:</strong> {{ data.metadata.lawnumber }}</div>
+      <div *ngIf="data.metadata.date"><strong>التاريخ:</strong> {{ data.metadata.date }}</div>
+      <div *ngIf="data.metadata.page !== undefined && data.metadata.page !== null"><strong>الصفحة:</strong> {{ data.metadata.page }}</div>
+      <div *ngIf="(data.metadata.subjects?.length || 0) > 0"><strong>الموضوعات:</strong> {{ data.metadata.subjects?.join('، ') }}</div>
+      <div *ngIf="(data.metadata.signatures?.length || 0) > 0"><strong>التوقيعات:</strong> {{ data.metadata.signatures?.join('، ') }}</div>
+    </div>
+
+    <div class="description-text" dir="rtl">
+      <pre>
+<app-highlight
+  [text]="data.description"
+  [searchTerms]="data.searchTerms || []"
+  [sourceRanges]="data.sourceRanges || []">
+</app-highlight>
+      </pre>
+    </div>
+  </mat-dialog-content>
+</div>

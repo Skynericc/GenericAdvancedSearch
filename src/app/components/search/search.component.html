@@ -1,0 +1,479 @@
+<div class="search-topbar">
+  <div class="topbar-left">
+    <button mat-stroked-button color="primary" class="admin-entry-btn" (click)="goToAdmin()">
+      <mat-icon>admin_panel_settings</mat-icon>
+      لوحة الإدارة
+    </button>
+  </div>
+</div>
+
+<div class="modern-page" dir="rtl">
+  <main class="modern-shell">
+    <div class="filters-container">
+      <div class="filter-header">
+        <div class="search-container">
+          <div class="search-row search-row-wide">
+            <div class="search-input-flex">
+              <p-chips
+                *ngIf="!isSemanticSearch"
+                class="main-query-chips"
+                [style]="{ width: '100%' }"
+                [(ngModel)]="searchQueries"
+                (ngModelChange)="onSearchQueriesChipsChange($event)"
+                separator=","
+                [addOnBlur]="true"
+                placeholder="اكتب استعلامًا ثم اضغط Enter">
+              </p-chips>
+
+              <textarea
+                *ngIf="isSemanticSearch"
+                pInputTextarea
+                class="main-query-textarea"
+                [style]="{ width: '100%' }"
+                [(ngModel)]="searchQueryText"
+                (ngModelChange)="onSearchQueryTextChange($event)"
+                rows="3"
+                placeholder="اكتب استعلامًا قانونيًا واحدًا، ويمكن أن يحتوي على عدة أسطر">
+              </textarea>
+            </div>
+
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="applyFilters()"
+              class="btn btn-primary search-btn">
+              <mat-icon>search</mat-icon>
+              بحث
+            </button>
+          </div>
+
+          <div class="semantic-checkbox">
+            <p-checkbox
+              [binary]="true"
+              [(ngModel)]="isSemanticSearch"
+              (ngModelChange)="onSemanticToggle($event)"
+              [disabled]="!canUseSemanticSearch"
+              inputId="semanticSearch"
+              label="تفعيل البحث الدلالي (اختياري)">
+            </p-checkbox>
+
+            <div class="semantic-help" *ngIf="cleanQueryCount !== 1">
+              <small>البحث الدلالي متاح فقط عند إدخال استعلام واحد.</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="filter-header">
+        <button class="toggle-filters" (click)="toggleFilters()">
+          <mat-icon>{{ showFilters ? 'expand_less' : 'expand_more' }}</mat-icon>
+          <span>{{ showFilters ? 'إخفاء الفلاتر' : 'إظهار فلاتر البحث المتقدم' }}</span>
+          <mat-icon>filter_alt</mat-icon>
+        </button>
+      </div>
+
+      <div class="filters-body p-fluid" [class.hidden]="!showFilters">
+        <div class="filter-notice" *ngIf="filtersLoading">
+          <small>جارٍ تحميل خيارات الفلاتر من الخادم...</small>
+        </div>
+
+        <div class="filter-notice error" *ngIf="filtersLoadError">
+          <small>{{ filtersLoadError }}</small>
+        </div>
+
+        <div class="filter-row">
+          <div class="filter-group">
+            <label style="margin-bottom: 10px;">الكلمات الإلزامية</label>
+            <p-chips
+              [(ngModel)]="mandatoryKeywords"
+              separator=","
+              [addOnBlur]="true"
+              placeholder="أدخل الكلمات ثم اضغط Enter أو فاصلة">
+            </p-chips>
+          </div>
+
+          <div class="filter-group">
+            <label style="margin-bottom: 10px;">الموضوعات</label>
+            <p-multiSelect
+              [options]="subjectOptions"
+              [(ngModel)]="selectedSubjects"
+              optionLabel="label"
+              optionValue="value"
+              defaultLabel="اختر الموضوعات"
+              [filter]="true"
+              appendTo="body"
+              panelStyleClass="overlay-lg">
+            </p-multiSelect>
+          </div>
+        </div>
+
+        <div class="filter-row">
+          <div class="filter-group">
+            <label style="margin-bottom: 10px;">التوقيعات</label>
+            <p-multiSelect
+              [options]="signatureOptions"
+              [(ngModel)]="selectedSignatures"
+              optionLabel="label"
+              optionValue="value"
+              defaultLabel="اختر التوقيعات"
+              [filter]="true"
+              appendTo="body"
+              panelStyleClass="overlay-lg">
+            </p-multiSelect>
+          </div>
+
+          <div class="filter-group">
+            <label style="margin-bottom: 10px;">اسم الملف</label>
+            <p-multiSelect
+              [options]="filenameOptions"
+              [(ngModel)]="selectedFilenames"
+              optionLabel="label"
+              optionValue="value"
+              defaultLabel="اختر الملفات"
+              [filter]="true"
+              appendTo="body"
+              panelStyleClass="overlay-lg">
+            </p-multiSelect>
+          </div>
+        </div>
+
+        <div class="filter-row">
+          <div class="filter-group">
+            <label style="margin-bottom: 10px;">نوع الوثيقة</label>
+            <p-multiSelect
+              [options]="doctypeOptions"
+              [(ngModel)]="selectedDoctypes"
+              optionLabel="label"
+              optionValue="value"
+              defaultLabel="اختر نوع الوثيقة"
+              [filter]="true"
+              appendTo="body"
+              panelStyleClass="overlay-lg">
+            </p-multiSelect>
+          </div>
+
+			<div class="filter-group">
+			  <label style="margin-bottom: 10px;">رقم القانون</label>
+
+			  <p-autoComplete
+				[(ngModel)]="selectedLawnumbers"
+				[suggestions]="filteredLawnumberOptions"
+				(completeMethod)="onLawnumberSearch($event)"
+				[multiple]="true"
+				[dropdown]="false"
+				[minLength]="1"
+				[forceSelection]="true"
+				[showEmptyMessage]="true"
+				emptyMessage="لا توجد اقتراحات"
+				appendTo="body"
+				placeholder="ابدأ بكتابة رقم القانون..."
+				styleClass="w-100">
+			  </p-autoComplete>
+
+			  <small class="filter-hint">
+				لن تظهر أي قائمة قبل الكتابة، وسيتم عرض أفضل 100 اقتراح فقط.
+			  </small>
+			</div>
+		  
+		  
+        </div>
+
+
+
+		<div class="filter-row">
+		  <div class="filter-group">
+		  <label style="margin-bottom: 10px;">من (شهر / سنة)</label>
+
+		  <ng-container *ngIf="minDate && maxDate">
+			<p-calendar
+			  [(ngModel)]="selectedDateFromMonth"
+			  (ngModelChange)="onDateFromMonthChange($event)"
+			  view="month"
+			  dateFormat="yy-mm"
+			  [readonlyInput]="true"
+			  placeholder="اختر شهر البداية"
+			  appendTo="body"
+			  [showIcon]="true"
+			  [minDate]="minDate"
+			  [maxDate]="maxDate">
+			</p-calendar>
+		  </ng-container>
+
+		  <ng-container *ngIf="minDate && !maxDate">
+			<p-calendar
+			  [(ngModel)]="selectedDateFromMonth"
+			  (ngModelChange)="onDateFromMonthChange($event)"
+			  view="month"
+			  dateFormat="yy-mm"
+			  [readonlyInput]="true"
+			  placeholder="اختر شهر البداية"
+			  appendTo="body"
+			  [showIcon]="true"
+			  [minDate]="minDate">
+			</p-calendar>
+		  </ng-container>
+
+		  <ng-container *ngIf="!minDate && maxDate">
+			<p-calendar
+			  [(ngModel)]="selectedDateFromMonth"
+			  (ngModelChange)="onDateFromMonthChange($event)"
+			  view="month"
+			  dateFormat="yy-mm"
+			  [readonlyInput]="true"
+			  placeholder="اختر شهر البداية"
+			  appendTo="body"
+			  [showIcon]="true"
+			  [maxDate]="maxDate">
+			</p-calendar>
+		  </ng-container>
+
+		  <ng-container *ngIf="!minDate && !maxDate">
+			<p-calendar
+			  [(ngModel)]="selectedDateFromMonth"
+			  (ngModelChange)="onDateFromMonthChange($event)"
+			  view="month"
+			  dateFormat="yy-mm"
+			  [readonlyInput]="true"
+			  placeholder="اختر شهر البداية"
+			  appendTo="body"
+			  [showIcon]="true">
+			</p-calendar>
+		  </ng-container>
+		</div>
+
+		  <div class="filter-group">
+		  <label style="margin-bottom: 10px;">إلى (شهر / سنة)</label>
+
+		  <ng-container *ngIf="minDate && maxDate">
+			<p-calendar
+			  [(ngModel)]="selectedDateToMonth"
+			  (ngModelChange)="onDateToMonthChange($event)"
+			  view="month"
+			  dateFormat="yy-mm"
+			  [readonlyInput]="true"
+			  placeholder="اختر شهر النهاية"
+			  appendTo="body"
+			  [showIcon]="true"
+			  [minDate]="minDate"
+			  [maxDate]="maxDate">
+			</p-calendar>
+		  </ng-container>
+
+		  <ng-container *ngIf="minDate && !maxDate">
+			<p-calendar
+			  [(ngModel)]="selectedDateToMonth"
+			  (ngModelChange)="onDateToMonthChange($event)"
+			  view="month"
+			  dateFormat="yy-mm"
+			  [readonlyInput]="true"
+			  placeholder="اختر شهر النهاية"
+			  appendTo="body"
+			  [showIcon]="true"
+			  [minDate]="minDate">
+			</p-calendar>
+		  </ng-container>
+
+		  <ng-container *ngIf="!minDate && maxDate">
+			<p-calendar
+			  [(ngModel)]="selectedDateToMonth"
+			  (ngModelChange)="onDateToMonthChange($event)"
+			  view="month"
+			  dateFormat="yy-mm"
+			  [readonlyInput]="true"
+			  placeholder="اختر شهر النهاية"
+			  appendTo="body"
+			  [showIcon]="true"
+			  [maxDate]="maxDate">
+			</p-calendar>
+		  </ng-container>
+
+		  <ng-container *ngIf="!minDate && !maxDate">
+			<p-calendar
+			  [(ngModel)]="selectedDateToMonth"
+			  (ngModelChange)="onDateToMonthChange($event)"
+			  view="month"
+			  dateFormat="yy-mm"
+			  [readonlyInput]="true"
+			  placeholder="اختر شهر النهاية"
+			  appendTo="body"
+			  [showIcon]="true">
+			</p-calendar>
+		  </ng-container>
+		</div>
+		</div>
+		
+		
+		
+
+        <div class="filter-actions">
+          <div class="right-actions">
+            <button mat-raised-button color="primary" (click)="applyFilters()" class="apply-filters-btn">
+              تطبيق الفلاتر
+            </button>
+            <button mat-stroked-button color="warn" (click)="resetFilters()" class="reset-filters-btn">
+              إعادة التعيين
+            </button>
+          </div>
+
+          <div class="left-actions">
+            <button mat-stroked-button color="accent" (click)="toggleFilters()" class="toggle-filters-btn">
+              إخفاء الفلاتر
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="results-bar">
+      <div class="results-count">
+        عدد النتائج : <span class="count-number">{{ totalResults }}</span>
+      </div>
+
+      <div class="export-actions">
+
+        <button
+          mat-raised-button
+          color="primary"
+          class="export-btn export-full"
+          (click)="exportFull()"
+          [disabled]="totalResults === 0 || isExportingFull">
+          <mat-icon>download</mat-icon>
+          {{ isExportingFull ? 'جارٍ التصدير...' : 'تصدير كامل (TXT)' }}
+        </button>
+      </div>
+    </div>
+
+    <section class="results-grid" *ngIf="pagedCards.length > 0">
+      <article
+        class="result-card"
+        *ngFor="let r of pagedCards"
+        [@fadeUp]>
+        <div class="card-pad">
+          <div class="card-head">
+            <div class="head-text">
+              <h3 class="card-title-modern">{{ r.title }}</h3>
+
+              <div class="meta">
+                <span class="meta-item">
+                  <mat-icon class="meta-icon">gavel</mat-icon>
+                  <span class="meta-strong">{{ r.source }}</span>
+                </span>
+
+                <span class="meta-dot">•</span>
+
+                <span class="meta-strong">صفحة {{ r.page }}</span>
+
+                <ng-container *ngIf="r.score !== null && r.score !== undefined">
+                  <span class="meta-dot">•</span>
+                  <span class="meta-score">Score {{ r.score | number:'1.2-2' }}</span>
+                </ng-container>
+              </div>
+
+              <div class="meta" *ngIf="(r.subjects?.length || 0) > 0">
+                <span class="meta-item">
+                  <mat-icon class="meta-icon">topic</mat-icon>
+                  <span>{{ r.subjects?.join('، ') }}</span>
+                </span>
+              </div>
+
+              <div class="meta" *ngIf="(r.signatures?.length || 0) > 0">
+                <span class="meta-item">
+                  <mat-icon class="meta-icon">edit_note</mat-icon>
+                  <span>{{ r.signatures?.join('، ') }}</span>
+                </span>
+              </div>
+            </div>
+
+            <div class="head-actions">
+              <button
+                type="button"
+                mat-icon-button
+                class="icon-btn"
+                matTooltip="نسخ المقتطف"
+                (click)="copySnippet(r.snippet)">
+                <mat-icon>content_copy</mat-icon>
+              </button>
+
+              <button
+                type="button"
+                mat-icon-button
+                class="icon-btn"
+                matTooltip="إخفاء النتيجة"
+                (click)="hideResult(r.id)">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+          </div>
+
+          <div class="preview-wrap">
+            <div class="preview-box" [class.collapsed]="!isExpanded(r.id)">
+              <app-highlight
+                [text]="r.snippet"
+                [searchTerms]="searchTerms"
+                [sourceRanges]="r.sourceRanges || []">
+              </app-highlight>
+            </div>
+
+            <div class="fade-bottom" *ngIf="!isExpanded(r.id)"></div>
+          </div>
+
+          <div class="card-foot">
+            <button
+              type="button"
+              class="toggle-btn"
+              (click)="toggleExpanded(r.id)">
+              <mat-icon class="toggle-icon">{{ isExpanded(r.id) ? 'expand_less' : 'expand_more' }}</mat-icon>
+              <span>{{ isExpanded(r.id) ? 'إظهار أقل' : 'إظهار المزيد من المقتطف' }}</span>
+            </button>
+
+            <div class="foot-actions">
+              <button
+                type="button"
+                class="ghost-btn"
+                (click)="openDialogById(r.id)">
+                عرض المزيد
+              </button>
+
+              <button
+                type="button"
+                class="primary-btn"
+                (click)="openDocument(r.id)">
+                فتح الـ PDF
+                <mat-icon class="ext-icon">open_in_new</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <div class="empty-modern" *ngIf="pagedCards.length === 0 && totalResults === 0">
+      <mat-icon>search</mat-icon>
+      <div>ابدأ بالبحث في النصوص القانونية لعرض النتائج.</div>
+    </div>
+
+    <nav *ngIf="totalPages > 1">
+      <ul class="pagination justify-content-center">
+        <li class="page-item" [class.disabled]="currentPage === 1">
+          <button class="page-link" (click)="goToPage(currentPage - 1)">«</button>
+        </li>
+
+        <li *ngIf="visiblePages[0] > 1" class="page-item disabled">
+          <span class="page-link">...</span>
+        </li>
+
+        <li *ngFor="let page of visiblePages" class="page-item" [class.active]="currentPage === page">
+          <button class="page-link" (click)="goToPage(page)">{{ page }}</button>
+        </li>
+
+        <li *ngIf="visiblePages[visiblePages.length - 1] < totalPages" class="page-item disabled">
+          <span class="page-link">...</span>
+        </li>
+
+        <li class="page-item" [class.disabled]="currentPage === totalPages">
+          <button class="page-link" (click)="goToPage(currentPage + 1)">»</button>
+        </li>
+      </ul>
+    </nav>
+  </main>
+</div>
