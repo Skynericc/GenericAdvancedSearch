@@ -35,8 +35,10 @@
         <p class="facet-status" *ngIf="!facets">{{ config.labels?.facets_error || 'Unable to load filter options from the server.' }}</p>
         <app-filter-panel [config]="config" [facets]="facets" [values]="filterValues" (valuesChange)="filterValues=$event"></app-filter-panel>
         <div class="filter-actions">
-          <button type="button" class="apply-button" (click)="search()">{{ config.labels?.apply_filters || 'Apply filters' }}</button>
-          <button type="button" class="reset-button" (click)="reset()">{{ config.labels?.reset || 'Reset' }}</button>
+          <div class="filter-main-actions">
+            <button type="button" class="apply-button" (click)="search()">{{ config.labels?.apply_filters || 'Apply filters' }}</button>
+            <button type="button" class="reset-button" (click)="reset()">{{ config.labels?.reset || 'Reset' }}</button>
+          </div>
           <button type="button" class="hide-button" (click)="showFilters=false">{{ config.labels?.hide_filters || 'Hide filters' }}</button>
         </div>
       </div>

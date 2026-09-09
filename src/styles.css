@@ -74,7 +74,7 @@ body {
   width: 48px;
   border: 0;
   border-radius: 14px 0 0 14px;
-  background: #3b82f6;
+  background: var(--primary-color, #3b82f6);
   color: #fff;
 }
 .filter-control .p-calendar .p-inputtext:enabled:focus { border-color: rgba(2, 132, 199, .45); box-shadow: 0 0 0 .2rem rgba(2, 132, 199, .12); }

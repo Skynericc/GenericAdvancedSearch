@@ -13,7 +13,7 @@
 .brand-copy { text-align: center; }
 .app-brand h1 {
   margin: 0;
-  color: #124b9b;
+  color: var(--primary-color, #124b9b);
   font-size: clamp(2.15rem, 4vw, 3.25rem);
   font-weight: 800;
   line-height: 1.35;
@@ -36,7 +36,7 @@
   border: 1px solid #d9dee7;
   border-radius: 13px;
   background: #fff;
-  color: #4054b8;
+  color: var(--primary-color, #4054b8);
   font-size: 13px;
   font-weight: 700;
   text-decoration: none;
@@ -50,7 +50,7 @@
   height: 18px;
   border-radius: 4px;
   background: transparent;
-  color: #4054b8;
+  color: var(--primary-color, #4054b8);
   font-size: 18px;
 }
 
