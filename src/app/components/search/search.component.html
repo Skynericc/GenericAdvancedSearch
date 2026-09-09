@@ -1,6 +1,6 @@
 <main class="search-page">
   <p class="status" *ngIf="loading">Loading…</p>
-  <p class="error" role="alert" *ngIf="error">{{ error }}</p>
+  <p class="error" role="alert" *ngIf="error"><strong>{{ errorTitle }}.</strong> {{ errorMessage }}</p>
 
   <ng-container *ngIf="config">
     <section class="search-shell">

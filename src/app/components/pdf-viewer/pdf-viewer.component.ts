@@ -8,7 +8,7 @@ import { SearchService } from '../../services/search.service';
   selector: 'app-pdf-viewer',
   template: `
     <p *ngIf="loading">Loading document…</p>
-    <p *ngIf="error" role="alert">{{ error }}</p>
+    <p *ngIf="error" role="alert"><strong>{{ errorTitle }}.</strong> {{ errorMessage }}</p>
     <ngx-extended-pdf-viewer *ngIf="fileUrl"
       #pdfViewer
       [src]="fileUrl"
@@ -33,7 +33,7 @@ export class PdfViewerComponent implements OnInit, AfterViewInit, OnDestroy {
   private isPdfLoaded = false;
   private targetPage: number;
   loading = true;
-  error = '';
+  error?: ApiError;
   fileUrl?: string;
   document?: DocumentDetail;
 
@@ -44,20 +44,32 @@ export class PdfViewerComponent implements OnInit, AfterViewInit, OnDestroy {
     this.targetPage = this.data?.page || 1;
   }
 
+  get errorTitle(): string {
+    return this.error?.type === 'DocumentNotFound' ? 'Document unavailable' : 'Document viewer unavailable';
+  }
+
+  get errorMessage(): string {
+    if (!this.error) return '';
+    if (this.error.type === 'DocumentNotFound') return 'The requested document is no longer available.';
+    if (this.error.type === 'SourceUnavailable') return 'The source file is not available for this document.';
+    if (this.error.type === 'BadConfigError' || this.error.type === 'InternalError') return 'We could not open this document. Please try again later.';
+    return this.error.message;
+  }
+
   ngOnInit(): void {
     this.searchService.getDocument(this.data.documentId).subscribe({
       next: document => {
         this.document = document;
         const sourceEndpoint = this.searchService.getSourceUrl(document.id);
         if (!document.source_url) {
-          this.error = 'The source file is not available for this document.';
+          this.error = { type: 'SourceUnavailable', message: 'The source file is not available for this document.', status: 404 };
         } else {
           // Keep document URL construction inside the generic API service.
           this.fileUrl = document.source_url || sourceEndpoint;
         }
         this.loading = false;
       },
-      error: (error: ApiError) => { this.error = error.message; this.loading = false; },
+      error: (error: ApiError) => { this.error = error; this.loading = false; },
     });
   }
 

@@ -1,27 +1,59 @@
-# DocSearch
+# Generic Search Frontend
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 15.2.11.
+Config-driven Angular frontend for the Generic Search Factory. The running
+backend supplies branding, filters, capabilities, facets, result-card fields,
+pagination limits, documents, and source-file URLs; this application does not
+contain use-case-specific search fields or labels.
 
-## Development server
+## Run locally
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+Use Node.js 18 (last verified with Node 18.20.8), then run:
 
-## Code scaffolding
+```bash
+npm install
+npm start
+```
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+Open `http://localhost:4200`. Start the generic backend separately; the local
+default is `http://localhost:5000/api`.
 
-## Build
+## Point at another project
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+For local development, change only `apiUrl` in
+`src/environments/environment.ts`. It must point at the generic backend's
+`/api` prefix, for example:
 
-## Running unit tests
+```ts
+apiUrl: 'https://search.example.org/api'
+```
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+Production builds use `src/environments/environment.prod.ts` through Angular's
+file replacement. Set its `apiUrl` to the deployment endpoint before building
+if it differs from the checked-in default.
 
-## Running end-to-end tests
+The backend must expose these generic endpoints:
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+- `GET /config` for the resolved UI contract
+- `GET /facets` for corpus-wide filter options and bounds
+- `POST /search` for a typed `SearchRequest`
+- `GET /documents/:id` and `GET /documents/:id/source` for document viewing
 
-## Further help
+## Commands
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+```bash
+npm start                         # development server
+npm run build                     # production build
+npm run build -- --configuration development
+npm test                          # Karma unit tests
+npx tsc --noEmit -p tsconfig.app.json
+npx tsc --noEmit -p tsconfig.spec.json
+```
+
+## Frontend behavior
+
+- `ConfigStore` and `FacetStore` share config and corpus-wide facets for the
+  browser session. See `docs/facets-caching.md` for the invalidation policy.
+- Filters and result-card fields are rendered entirely from `GET /config`.
+- A 200 response with zero hits is a normal empty-result state. API failures
+  use the backend error envelope: invalid queries are actionable, while
+  configuration and internal errors remain generic.
