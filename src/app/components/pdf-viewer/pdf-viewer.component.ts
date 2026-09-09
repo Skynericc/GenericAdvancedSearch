@@ -15,7 +15,7 @@ import { SearchService } from '../../services/search.service';
       [useBrowserLocale]="true"
       [textLayer]="true"
       [zoom]="'page-width'"
-      [page]="data.page"
+      [page]="targetPage"
       [showSidebarButton]="true"
       [showFindButton]="true"
       language="ar"
@@ -31,7 +31,7 @@ export class PdfViewerComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('pdfViewer') pdfViewer!: NgxExtendedPdfViewerComponent;
 
   private isPdfLoaded = false;
-  private targetPage: number;
+  targetPage: number;
   loading = true;
   error?: ApiError;
   fileUrl?: string;
@@ -60,12 +60,14 @@ export class PdfViewerComponent implements OnInit, AfterViewInit, OnDestroy {
     this.searchService.getDocument(this.data.documentId).subscribe({
       next: document => {
         this.document = document;
-        const sourceEndpoint = this.searchService.getSourceUrl(document.id);
         if (!document.source_url) {
           this.error = { type: 'SourceUnavailable', message: 'The source file is not available for this document.', status: 404 };
         } else {
-          // Keep document URL construction inside the generic API service.
-          this.fileUrl = document.source_url || sourceEndpoint;
+          // Backend navigation URLs may be relative; build this URL against the
+          // configured API origin so Angular never resolves it against itself.
+          this.fileUrl = this.searchService.getSourceUrl(document.id);
+          const sourcePage = document.metadata['source_page'];
+          if (typeof sourcePage === 'number' && sourcePage > 0) this.targetPage = sourcePage;
         }
         this.loading = false;
       },

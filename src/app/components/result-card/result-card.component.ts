@@ -7,6 +7,16 @@ export class ResultCardComponent {
   @Input() fields: string[] = [];
   @Output() documentOpen = new EventEmitter<string>();
 
+  get documentIdentifier(): string { return this.hit?.id || '—'; }
+  get sourceFile(): string | null {
+    const value = this.hit?.metadata?.['source_file'];
+    return typeof value === 'string' && value.trim() ? value : null;
+  }
+  get sourcePage(): string | null {
+    const value = this.hit?.metadata?.['source_page'];
+    return typeof value === 'number' || typeof value === 'string' ? String(value) : null;
+  }
+
   valueFor(field: string): string {
     const value = this.hit?.metadata?.[field];
     if (value === null || value === undefined || value === '') return '—';

@@ -14,7 +14,7 @@ describe('ResultCardComponent', () => {
     fixture.componentInstance.fields = ['title', 'missing', 'tags'];
     fixture.componentInstance.hit = {
       id: '1',
-      metadata: { title: 'Configured title', tags: ['one', 'two'] },
+      metadata: { title: 'Configured title', tags: ['one', 'two'], source_file: 'bulletin.pdf', source_page: 3 },
     };
     fixture.detectChanges();
   });
@@ -22,6 +22,9 @@ describe('ResultCardComponent', () => {
   it('renders only configured metadata fields and falls back for absent values', () => {
     const element = fixture.nativeElement as HTMLElement;
     expect(element.textContent).toContain('Configured title');
+    expect(element.textContent).toContain('Document');
+    expect(element.textContent).toContain('bulletin.pdf');
+    expect(element.textContent).toContain('Page 3');
     expect(element.textContent).toContain('one, two');
     expect(element.textContent).toContain('—');
     expect(element.querySelectorAll('.metadata-row').length).toBe(3);
