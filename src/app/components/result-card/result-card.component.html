@@ -8,6 +8,6 @@
   <p class="snippet" *ngIf="hit.snippet?.text">{{ hit.snippet?.text }}</p>
   <footer *ngIf="hit.score !== null && hit.score !== undefined || hit.source_url || hit.document_url">
     <span *ngIf="hit.score !== null && hit.score !== undefined">Score: {{ hit.score | number:'1.2-2' }}</span>
-    <a *ngIf="hit.source_url || hit.document_url" [href]="hit.source_url || hit.document_url" target="_blank" rel="noopener">Open document</a>
+    <button type="button" *ngIf="hit.source_url || hit.document_url" (click)="openDocument()">Open document</button>
   </footer>
 </article>

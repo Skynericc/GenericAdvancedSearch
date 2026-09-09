@@ -1,13 +1,17 @@
-import { Component, Inject, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
+import { AfterViewInit, Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { NgxExtendedPdfViewerComponent } from 'ngx-extended-pdf-viewer';
+import { ApiError, DocumentDetail } from '../../models/search-api.models';
+import { SearchService } from '../../services/search.service';
 
 @Component({
   selector: 'app-pdf-viewer',
   template: `
-    <ngx-extended-pdf-viewer 
+    <p *ngIf="loading">Loading document…</p>
+    <p *ngIf="error" role="alert">{{ error }}</p>
+    <ngx-extended-pdf-viewer *ngIf="fileUrl"
       #pdfViewer
-      [src]="data.fileUrl"
+      [src]="fileUrl"
       [useBrowserLocale]="true"
       [textLayer]="true"
       [zoom]="'page-width'"
@@ -23,14 +27,38 @@ import { NgxExtendedPdfViewerComponent } from 'ngx-extended-pdf-viewer';
     ngx-extended-pdf-viewer { width: 100%; height: 90vh; }
   `]
 })
-export class PdfViewerComponent implements AfterViewInit, OnDestroy {
+export class PdfViewerComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('pdfViewer') pdfViewer!: NgxExtendedPdfViewerComponent;
 
   private isPdfLoaded = false;
   private targetPage: number;
+  loading = true;
+  error = '';
+  fileUrl?: string;
+  document?: DocumentDetail;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any) {
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: { documentId: string; searchTerms?: string[]; page?: number },
+    private readonly searchService: SearchService,
+  ) {
     this.targetPage = this.data?.page || 1;
+  }
+
+  ngOnInit(): void {
+    this.searchService.getDocument(this.data.documentId).subscribe({
+      next: document => {
+        this.document = document;
+        const sourceEndpoint = this.searchService.getSourceUrl(document.id);
+        if (!document.source_url) {
+          this.error = 'The source file is not available for this document.';
+        } else {
+          // Keep document URL construction inside the generic API service.
+          this.fileUrl = document.source_url || sourceEndpoint;
+        }
+        this.loading = false;
+      },
+      error: (error: ApiError) => { this.error = error.message; this.loading = false; },
+    });
   }
 
   ngAfterViewInit(): void {
@@ -46,7 +74,7 @@ export class PdfViewerComponent implements AfterViewInit, OnDestroy {
     // Re-apply when the search bar is opened
     eventBus?.on("findbaropen", () => {
       if (this.data?.searchTerms?.length) {
-        this.tryBuiltInSearch(this.data.searchTerms);
+        this.tryBuiltInSearch(this.data.searchTerms || []);
       }
     });
 
@@ -54,7 +82,7 @@ export class PdfViewerComponent implements AfterViewInit, OnDestroy {
     eventBus?.on("find", (evt: any) => {
       if ((!evt.query || evt.query.trim() === "") && this.data?.searchTerms?.length) {
         setTimeout(() => {
-          this.tryBuiltInSearch(this.data.searchTerms);
+          this.tryBuiltInSearch(this.data.searchTerms || []);
         }, 100);
       }
     });
@@ -66,7 +94,7 @@ export class PdfViewerComponent implements AfterViewInit, OnDestroy {
 
       if (this.data?.searchTerms?.length) {
         setTimeout(() => {
-          this.tryBuiltInSearch(this.data.searchTerms);
+          this.tryBuiltInSearch(this.data.searchTerms || []);
         }, 200);
       }
     }, 100);

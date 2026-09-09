@@ -2,14 +2,23 @@ import { Component, OnInit } from '@angular/core';
 import { forkJoin } from 'rxjs';
 import { ApiError, AppConfig, FacetsResponse, FilterValue, SearchRequest, SearchResultPage } from '../../models/search-api.models';
 import { ConfigStore } from '../../services/config.store';
+import { FacetStore } from '../../services/facet.store';
 import { SearchService } from '../../services/search.service';
+import { MatDialog } from '@angular/material/dialog';
+import { PdfViewerComponent } from '../pdf-viewer/pdf-viewer.component';
 
 @Component({ selector: 'app-search', templateUrl: './search.component.html', styleUrls: ['./search.component.css'] })
 export class SearchComponent implements OnInit {
   config?: AppConfig; facets?: FacetsResponse; results?: SearchResultPage;
   query = ''; useSemantic = false; showFilters = true; loading = true; error = '';
+  pageSize = 1;
   filterValues: Record<string, FilterValue> = {};
-  constructor(private readonly searchService: SearchService, private readonly configStore: ConfigStore) {}
+  constructor(
+    private readonly searchService: SearchService,
+    private readonly configStore: ConfigStore,
+    private readonly facetStore: FacetStore,
+    private readonly dialog: MatDialog,
+  ) {}
   get searchPlaceholder(): string {
     if (!this.config) return '';
     return this.useSemantic
@@ -17,12 +26,13 @@ export class SearchComponent implements OnInit {
       : this.config.branding.search_placeholder || '';
   }
   ngOnInit(): void {
-    forkJoin({ config: this.configStore.config$, facets: this.searchService.getFacets() }).subscribe({
+    forkJoin({ config: this.configStore.config$, facets: this.facetStore.facets$ }).subscribe({
       next: ({config, facets}) => {
         this.config = config;
         this.facets = facets;
         // A project can enable text semantics without lexical search.
         this.useSemantic = !config.search.lexical && config.search.semantic_text;
+        this.pageSize = this.boundedPageSize(config.pagination.default_page_size);
         this.applyDefaults();
         this.loading = false;
       },
@@ -32,7 +42,8 @@ export class SearchComponent implements OnInit {
   search(page = 1): void {
     if (!this.config) return;
     const text = this.query.trim();
-    const body: SearchRequest = { filters: this.filterValues, page, page_size: this.config.pagination.default_page_size };
+    this.pageSize = this.boundedPageSize(this.pageSize);
+    const body: SearchRequest = { filters: this.filterValues, page, page_size: this.pageSize };
     if ((this.useSemantic || !this.config.search.lexical) && this.config.search.semantic_text && text) {
       body.semantic_text = [text];
     } else if (this.config.search.lexical) {
@@ -54,5 +65,16 @@ export class SearchComponent implements OnInit {
   }
   previous(): void { if (this.results?.has_previous) this.search(this.results.page - 1); }
   next(): void { if (this.results?.has_next) this.search(this.results.page + 1); }
+  openDocument(id: string): void {
+    this.dialog.open(PdfViewerComponent, {
+      width: '90vw',
+      height: '95vh',
+      data: { documentId: id, searchTerms: this.query.trim() ? [this.query.trim()] : [] },
+    });
+  }
   private applyDefaults(): void { if (this.config) for (const f of this.config.filters) if (f.default !== null && f.default !== undefined) this.filterValues[f.name] = f.default as FilterValue; }
+  private boundedPageSize(value: number): number {
+    const max = this.config?.pagination.max_page_size || 1;
+    return Math.min(Math.max(Math.floor(Number(value)) || 1, 1), max);
+  }
 }
