@@ -116,3 +116,35 @@ export interface SearchResultPage {
 
 export type FilterValue = string | number | boolean | string[] | number[] |
   { min?: string | number; max?: string | number } | null;
+
+/** The lexical portion of the backend's `SearchRequest` contract. */
+export interface LexicalQuery {
+  first_of?: string[];
+  // A flat list is ANDed; a list of lists is ORed across AND groups.
+  mandatories?: string[] | string[][];
+}
+
+export interface SearchRequest {
+  lexical?: LexicalQuery;
+  semantic_text?: string[];
+  filters?: Record<string, unknown>;
+  page?: number;
+  page_size?: number;
+}
+
+/** Full document payload returned by GET /api/documents/:id. */
+export interface DocumentDetail {
+  id: string;
+  text: string;
+  metadata: Record<string, unknown>;
+  document_url: string;
+  source_url: string | null;
+}
+
+/** The JSON error envelope exposed by the generic backend. */
+export interface ApiError {
+  type: string;
+  message: string;
+  details?: unknown;
+  status: number;
+}

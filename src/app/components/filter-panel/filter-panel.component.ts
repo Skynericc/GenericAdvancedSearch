@@ -6,6 +6,9 @@ export class FilterPanelComponent {
   @Input() config?: AppConfig;
   @Input() facets?: FacetsResponse;
   @Input() values: Record<string, FilterValue> = {};
+  /** Frozen Track B container contract. */
+  @Output() filtersChange = new EventEmitter<Record<string, FilterValue>>();
+  /** @deprecated Use filtersChange; retained for existing Track A templates. */
   @Output() valuesChange = new EventEmitter<Record<string, FilterValue>>();
   get orderedFilters(): FilterDefinition[] {
     return [...(this.config?.filters || [])].sort((left, right) => left.order - right.order);
@@ -14,6 +17,7 @@ export class FilterPanelComponent {
     const next = { ...this.values };
     if (value === null || (Array.isArray(value) && value.length === 0)) delete next[name];
     else next[name] = value;
+    this.filtersChange.emit(next);
     this.valuesChange.emit(next);
   }
   trackByName(_: number, filter: { name: string }): string { return filter.name; }

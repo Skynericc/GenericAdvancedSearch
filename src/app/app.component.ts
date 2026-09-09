@@ -4,7 +4,7 @@ import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { DOCUMENT } from '@angular/common';
 import { BrandingConfig, FrontendLabels } from './models/search-api.models';
-import { SearchService } from './services/search.service';
+import { ConfigStore } from './services/config.store';
 
 @Component({
   selector: 'app-root',
@@ -16,7 +16,7 @@ export class AppComponent implements OnInit {
   branding?: BrandingConfig;
   labels?: FrontendLabels;
 
-  constructor(private router: Router, private readonly searchService: SearchService, @Inject(DOCUMENT) private readonly document: Document) {
+  constructor(private router: Router, private readonly configStore: ConfigStore, @Inject(DOCUMENT) private readonly document: Document) {
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: any) => {
@@ -26,7 +26,7 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.searchService.getConfig().subscribe({
+    this.configStore.config$.subscribe({
       next: config => {
         this.branding = config.branding;
         this.labels = config.labels;

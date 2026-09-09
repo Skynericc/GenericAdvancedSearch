@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { forkJoin } from 'rxjs';
-import { AppConfig, FacetsResponse, FilterValue, SearchResultPage } from '../../models/search-api.models';
+import { ApiError, AppConfig, FacetsResponse, FilterValue, SearchRequest, SearchResultPage } from '../../models/search-api.models';
+import { ConfigStore } from '../../services/config.store';
 import { SearchService } from '../../services/search.service';
 
 @Component({ selector: 'app-search', templateUrl: './search.component.html', styleUrls: ['./search.component.css'] })
@@ -8,7 +9,7 @@ export class SearchComponent implements OnInit {
   config?: AppConfig; facets?: FacetsResponse; results?: SearchResultPage;
   query = ''; useSemantic = false; showFilters = true; loading = true; error = '';
   filterValues: Record<string, FilterValue> = {};
-  constructor(private readonly searchService: SearchService) {}
+  constructor(private readonly searchService: SearchService, private readonly configStore: ConfigStore) {}
   get searchPlaceholder(): string {
     if (!this.config) return '';
     return this.useSemantic
@@ -16,19 +17,32 @@ export class SearchComponent implements OnInit {
       : this.config.branding.search_placeholder || '';
   }
   ngOnInit(): void {
-    forkJoin({ config: this.searchService.getConfig(), facets: this.searchService.getFacets() }).subscribe({
-      next: ({config, facets}) => { this.config = config; this.facets = facets; this.applyDefaults(); this.loading = false; },
+    forkJoin({ config: this.configStore.config$, facets: this.searchService.getFacets() }).subscribe({
+      next: ({config, facets}) => {
+        this.config = config;
+        this.facets = facets;
+        // A project can enable text semantics without lexical search.
+        this.useSemantic = !config.search.lexical && config.search.semantic_text;
+        this.applyDefaults();
+        this.loading = false;
+      },
       error: () => { this.error = 'Unable to load the search configuration.'; this.loading = false; }
     });
   }
   search(page = 1): void {
     if (!this.config) return;
     const text = this.query.trim();
-    const body: any = { filters: this.filterValues, page, page_size: this.config.pagination.default_page_size };
-    if (this.useSemantic && this.config.search.semantic_text && text) body.semantic_text = [text];
-    else body.lexical = { first_of: text ? [text] : [] };
+    const body: SearchRequest = { filters: this.filterValues, page, page_size: this.config.pagination.default_page_size };
+    if ((this.useSemantic || !this.config.search.lexical) && this.config.search.semantic_text && text) {
+      body.semantic_text = [text];
+    } else if (this.config.search.lexical) {
+      body.lexical = { first_of: text ? [text] : [] };
+    } else {
+      this.error = 'This project has no browser-supported search mode configured.';
+      return;
+    }
     this.error = ''; this.loading = true;
-    this.searchService.search(body).subscribe({ next: result => { this.results = result; this.loading = false; }, error: err => { this.error = err?.error?.error?.message || 'Search failed.'; this.loading = false; } });
+    this.searchService.search(body).subscribe({ next: result => { this.results = result; this.loading = false; }, error: (err: ApiError) => { this.error = err.message; this.loading = false; } });
   }
   reset(): void {
     const wasVisible = this.showFilters;
