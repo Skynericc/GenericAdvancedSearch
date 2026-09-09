@@ -4,30 +4,90 @@
 @import '@angular/cdk/overlay-prebuilt.css';
 @import "@angular/material/prebuilt-themes/indigo-pink.css";
 
-.title-wrapper {
-  text-align: center;
-  margin-top: 1rem;
-}
-
-.page-title {
-  font-family: 'Cairo', sans-serif;
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: #084298;
-  direction: rtl;
-  display: inline-block;
-  text-align: center;
-  margin-top: 1rem;
-}
+:root { --primary-color: #4054b8; }
 body {
   margin: 0;
   padding: 0;
-  font-family: sans-serif;
+  font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+  color: #172033;
   background: linear-gradient(to bottom, #eff6ff, #fffbeb, #fff1f2);
   background-attachment: fixed;
 }
+.filter-control label,.filter-control legend { display:block; margin-bottom:.5rem; font-weight:650; color:#111827; }.filter-control fieldset { margin:0; padding:0; border:0; display:grid; gap:.55rem; }.filter-control input,.filter-control select { box-sizing:border-box; width:100%; min-height:3rem; padding:.55rem .8rem; border:1px solid #cbd5e1; border-radius:.55rem; background:#fff; font:inherit; }.filter-control select:not([multiple]) { appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23707884' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:left 16px center; padding-left:44px; cursor:pointer; }.filter-control select[multiple] { min-height:7rem; }.filter-control fieldset > div { display:flex; align-items:center; gap:.45rem; }.filter-control fieldset > div label,.filter-control .boolean-control label { margin:0; font-weight:400; }.filter-control fieldset > div input,.filter-control .boolean-control input { width:auto; min-height:auto; }.filter-control .range-field { display:grid; gap:.25rem; }.filter-control .boolean-control { display:flex; align-items:center; gap:.5rem; min-height:2.5rem; }.filter-control input:focus-visible,.filter-control select:focus-visible,.search-form button:focus-visible,.filter-toolbar button:focus-visible,.pager button:focus-visible { outline:3px solid color-mix(in srgb, var(--primary-color) 35%, transparent); outline-offset:2px; }
 .custom-dialog-container .mat-dialog-container {
   padding: 0;
   overflow: hidden;
   border-radius: 8px;
 }
+
+/* Legal reference layout: large, touch-friendly controls with a stable
+   two-column RTL grid. The config still supplies all copy and values. */
+.filter-control label,
+.filter-control legend {
+  margin-bottom: 6px;
+  color: rgba(15, 23, 42, .92);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+.filter-control input,
+.filter-control select {
+  min-height: 48px;
+  padding: 9px 12px;
+  border: 1px solid rgba(2, 132, 199, .25);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, .75);
+  color: #707984;
+  font-size: 16px;
+  text-align: right;
+  box-shadow: none;
+}
+.filter-control input::placeholder { color: rgba(71, 85, 105, .72); }
+.filter-control input:focus,
+.filter-control select:focus { border-color: rgba(2, 132, 199, .45); box-shadow: 0 0 0 .2rem rgba(2, 132, 199, .12); outline: none; }
+.filter-control select[multiple] { min-height: 112px; }
+.filter-control select[multiple].multi-select-list { min-height: 0; height: auto; padding: 7px 12px; line-height: 1.8; background-image: none; }
+.filter-control select[multiple].multi-select-list option { padding: 3px 7px; border-radius: 6px; }
+.filter-control select[multiple].multi-select-list option:checked { background: color-mix(in srgb, var(--primary-color) 16%, white); color: #1e3a8a; }
+.filter-control fieldset { gap: 12px; }
+.filter-control .range-field { gap: 5px; }
+.filter-control .range-field label { margin-bottom: 0; font-size: 13px; font-weight: 600; }
+.filter-control input[type="date"] { color-scheme: light; }
+.date-input-wrap { position: relative; display: block; }
+.date-input-wrap input[type="date"] { padding-left: 42px; }
+.date-input-wrap > mat-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: #0284c7; font-size: 20px; pointer-events: none; }
+.filter-control input[type="date"]::-webkit-calendar-picker-indicator { opacity: 0; cursor: pointer; }
+.filter-control .p-calendar { position: relative; display: flex; width: 100%; direction: rtl; }
+.filter-control .p-calendar .p-inputtext {
+  width: 100%;
+  min-height: 48px;
+  border: 1px solid rgba(2, 132, 199, .25);
+  border-radius: 0 14px 14px 0;
+  background: rgba(255, 255, 255, .75);
+  color: #707984;
+  font: inherit;
+  font-size: 16px;
+  text-align: right;
+  box-shadow: none;
+}
+.filter-control .p-calendar .p-datepicker-trigger {
+  width: 48px;
+  border: 0;
+  border-radius: 14px 0 0 14px;
+  background: #3b82f6;
+  color: #fff;
+}
+.filter-control .p-calendar .p-inputtext:enabled:focus { border-color: rgba(2, 132, 199, .45); box-shadow: 0 0 0 .2rem rgba(2, 132, 199, .12); }
+.p-datepicker { z-index: 1100 !important; direction: ltr; border: 0; border-radius: 12px; box-shadow: 0 12px 40px rgba(15, 23, 42, .16); overflow: hidden; box-sizing: border-box; max-width: calc(100vw - 24px); }
+.p-datepicker .p-datepicker-header { min-height: 54px; padding: 0 14px; border-bottom: 1px solid #e2e8f0; }
+.p-datepicker .p-datepicker-title { color: #4b5563; font-size: 1.15rem; font-weight: 700; }
+.p-datepicker .p-datepicker-prev,
+.p-datepicker .p-datepicker-next { width: 34px; height: 34px; border-radius: 50%; color: #707984; }
+.p-datepicker .p-datepicker-prev:hover,
+.p-datepicker .p-datepicker-next:hover { background: #eff6ff; color: var(--primary-color, #4054b8); }
+.p-datepicker .p-monthpicker { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3px 8px; padding: 13px 14px 16px; }
+.p-datepicker .p-monthpicker .p-monthpicker-month { width: auto; min-width: 0; min-height: 42px; margin: 0; border-radius: 8px; color: #4b5563; font-size: 1rem; }
+.p-datepicker .p-monthpicker .p-monthpicker-month:hover { background: #eff6ff; color: var(--primary-color, #4054b8); }
+.p-datepicker .p-monthpicker .p-monthpicker-month.p-highlight { background: #eaf2ff; color: #2459d8; }
+.filter-control input[type="checkbox"],
+.filter-control input[type="radio"] { min-height: auto; width: auto; }

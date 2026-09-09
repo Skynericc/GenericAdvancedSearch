@@ -12,6 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { HighlightPipe } from './pipes/highlight.pipe';
 import { HighlightComponent } from './components/highlight/highlight.component';
 import { DescriptionDialogComponent } from './components/description-dialog/description-dialog.component';
+import { PhraseDialogComponent } from './components/phrase-dialog/phrase-dialog.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -43,6 +44,19 @@ import { PdfViewerComponent } from './components/pdf-viewer/pdf-viewer.component
 // ✅ Admin page
 import { AdminComponent } from './components/admin/admin.component';
 import { AutoCompleteModule } from 'primeng/autocomplete';
+import { FilterPanelComponent } from './components/filter-panel/filter-panel.component';
+import { ResultCardComponent } from './components/result-card/result-card.component';
+import { DropdownControlComponent } from './components/filter-controls/dropdown-control.component';
+import { TextControlComponent } from './components/filter-controls/text-control.component';
+import { RadioControlComponent } from './components/filter-controls/radio-control.component';
+import { DateControlComponent } from './components/filter-controls/date-control.component';
+import { DateRangeControlComponent } from './components/filter-controls/date-range-control.component';
+import { NumberControlComponent } from './components/filter-controls/number-control.component';
+import { NumberRangeControlComponent } from './components/filter-controls/number-range-control.component';
+import { CheckboxControlComponent } from './components/filter-controls/checkbox-control.component';
+import { ToggleControlComponent } from './components/filter-controls/toggle-control.component';
+import { MultiSelectControlComponent } from './components/filter-controls/multi-select-control.component';
+import { CheckboxGroupControlComponent } from './components/filter-controls/checkbox-group-control.component';
 
 @NgModule({
   declarations: [
@@ -51,8 +65,22 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
     HighlightPipe,
     HighlightComponent,
     DescriptionDialogComponent,
+    PhraseDialogComponent,
     PdfViewerComponent,
-    AdminComponent
+    AdminComponent,
+    FilterPanelComponent,
+    ResultCardComponent,
+    DropdownControlComponent,
+    TextControlComponent,
+    RadioControlComponent,
+    DateControlComponent,
+    DateRangeControlComponent,
+    NumberControlComponent,
+    NumberRangeControlComponent,
+    CheckboxControlComponent,
+    ToggleControlComponent,
+    MultiSelectControlComponent,
+    CheckboxGroupControlComponent
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,16 @@
+<section class="filter-grid" *ngIf="config" aria-label="Search filters">
+  <ng-container *ngFor="let filter of orderedFilters; trackBy: trackByName"><div class="filter-control" [ngSwitch]="filter.control">
+    <app-text-control *ngSwitchCase="'text'" [filter]="filter" [facet]="facets?.filters?.[filter.name]" (valueChange)="onValue(filter.name, $event)"></app-text-control>
+    <app-dropdown-control *ngSwitchCase="'dropdown'" [filter]="filter" [facet]="facets?.filters?.[filter.name]" (valueChange)="onValue(filter.name, $event)"></app-dropdown-control>
+    <app-radio-control *ngSwitchCase="'radio'" [filter]="filter" [facet]="facets?.filters?.[filter.name]" (valueChange)="onValue(filter.name, $event)"></app-radio-control>
+    <app-date-control *ngSwitchCase="'date'" [filter]="filter" [facet]="facets?.filters?.[filter.name]" (valueChange)="onValue(filter.name, $event)"></app-date-control>
+    <app-date-range-control *ngSwitchCase="'date_range'" [filter]="filter" [facet]="facets?.filters?.[filter.name]" (valueChange)="onValue(filter.name, $event)"></app-date-range-control>
+    <app-number-control *ngSwitchCase="'number'" [filter]="filter" [facet]="facets?.filters?.[filter.name]" (valueChange)="onValue(filter.name, $event)"></app-number-control>
+    <app-number-range-control *ngSwitchCase="'number_range'" [filter]="filter" [facet]="facets?.filters?.[filter.name]" (valueChange)="onValue(filter.name, $event)"></app-number-range-control>
+    <app-checkbox-control *ngSwitchCase="'checkbox'" [filter]="filter" [facet]="facets?.filters?.[filter.name]" (valueChange)="onValue(filter.name, $event)"></app-checkbox-control>
+    <app-toggle-control *ngSwitchCase="'toggle'" [filter]="filter" [facet]="facets?.filters?.[filter.name]" (valueChange)="onValue(filter.name, $event)"></app-toggle-control>
+    <app-multi-select-control *ngSwitchCase="'multi_select'" [filter]="filter" [facet]="facets?.filters?.[filter.name]" (valueChange)="onValue(filter.name, $event)"></app-multi-select-control>
+    <app-checkbox-group-control *ngSwitchCase="'checkbox_group'" [filter]="filter" [facet]="facets?.filters?.[filter.name]" (valueChange)="onValue(filter.name, $event)"></app-checkbox-group-control>
+    <p *ngSwitchDefault class="unsupported-control">Unsupported control: {{ filter.control }}</p>
+  </div></ng-container>
+</section>

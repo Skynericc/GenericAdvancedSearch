@@ -1,8 +1,12 @@
-<div class="title-wrapper" *ngIf="showTitle">
-  <h1 class="page-title">
-    <i class="bi bi-journal-text text-primary"></i>
-    البحث في النصوص القانونية
-  </h1>
-</div>
-
+<header class="app-brand" *ngIf="showTitle && branding">
+  <a class="admin-link" routerLink="/admin" [attr.aria-label]="labels?.admin_link || 'Admin'">
+    <mat-icon class="admin-icon" aria-hidden="true">admin_panel_settings</mat-icon>
+    <span>{{ labels?.admin_link || 'Admin' }}</span>
+  </a>
+  <img *ngIf="branding.logo_url" class="brand-logo" [src]="branding.logo_url" [alt]="branding.title">
+  <div class="brand-copy">
+    <h1>{{ branding.title }}</h1>
+    <p *ngIf="branding.subtitle">{{ branding.subtitle }}</p>
+  </div>
+</header>
 <router-outlet></router-outlet>

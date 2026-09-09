@@ -17,7 +17,7 @@ export class PhraseDialogComponent {
   ) {}
 
   openPdf(chunkId: number) {
-    this.searchService.openPdf(chunkId).subscribe({
+    this.searchService.getDocument(String(chunkId)).subscribe({
       next: (res: any) => {
         // console.log('📄 URL PDF envoyée au viewer:', res.file_url);
         this.dialog.open(PdfViewerComponent, {
@@ -30,7 +30,7 @@ export class PhraseDialogComponent {
           }
         });
       },
-      error: (err) => console.error('❌ Erreur ouverture PDF :', err)
+      error: (err: unknown) => console.error('Unable to open document:', err)
     });
   }
 }
