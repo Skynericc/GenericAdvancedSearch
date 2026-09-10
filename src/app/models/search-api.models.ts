@@ -36,8 +36,10 @@ export const CONTROL_TYPES: readonly ControlType[] = CONTROL_MAPPING_TABLE
 
 export interface BrandingConfig {
   title: string;
+  page_title?: string | null;
   subtitle?: string | null;
   logo_url?: string | null;
+  favicon_url?: string | null;
   primary_color?: string | null;
   search_placeholder?: string | null;
   semantic_search_placeholder?: string | null;

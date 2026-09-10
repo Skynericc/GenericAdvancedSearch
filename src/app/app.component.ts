@@ -30,11 +30,27 @@ export class AppComponent implements OnInit {
       next: config => {
         this.branding = config.branding;
         this.labels = config.labels;
+        this.document.title = config.branding.page_title || config.branding.title;
         const direction = config.branding.direction || 'ltr';
         this.document.documentElement.dir = direction;
         this.document.documentElement.lang = direction === 'rtl' ? 'ar' : 'en';
         if (config.branding.primary_color) this.document.documentElement.style.setProperty('--primary-color', config.branding.primary_color);
+        this.applyFavicon(config.branding.favicon_url);
       }
     });
+  }
+
+  private applyFavicon(faviconUrl?: string | null): void {
+    if (!faviconUrl) return;
+
+    let favicon = this.document.head.querySelector<HTMLLinkElement>('link[rel~="icon"]');
+    if (!favicon) {
+      favicon = this.document.createElement('link');
+      favicon.rel = 'icon';
+      this.document.head.appendChild(favicon);
+    }
+
+    favicon.href = faviconUrl;
+    favicon.type = faviconUrl.toLowerCase().includes('.svg') ? 'image/svg+xml' : 'image/x-icon';
   }
 }

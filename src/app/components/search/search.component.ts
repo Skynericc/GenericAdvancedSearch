@@ -73,9 +73,21 @@ export class SearchComponent implements OnInit {
   }
   reset(): void {
     const wasVisible = this.showFilters;
-    this.filterValues = {}; this.applyDefaults(); this.query = ''; this.useSemantic = false; this.results = undefined;
-    // FilterControl intentionally has only filter/facet/valueChange. Recreate it
-    // so its config default is restored without introducing a fourth input.
+    this.filterValues = {};
+    this.query = '';
+    this.useSemantic = false;
+    this.results = undefined;
+
+    // Reset means clear the visible controls, including configured defaults.
+    // Controls are recreated without defaults while preserving the shared
+    // FilterControl interface (filter, facet, valueChange).
+    if (this.config) {
+      this.config = {
+        ...this.config,
+        filters: this.config.filters.map(filter => ({ ...filter, default: undefined }))
+      };
+    }
+
     this.showFilters = false;
     Promise.resolve().then(() => this.showFilters = wasVisible);
   }
