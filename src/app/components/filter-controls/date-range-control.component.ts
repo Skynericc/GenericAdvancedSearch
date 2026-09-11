@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { BaseFilterControl } from './filter-control';
+import { parseCalendarDate } from './calendar-date.utils';
 
 @Component({
   selector: 'app-date-range-control',
@@ -16,8 +17,6 @@ import { BaseFilterControl } from './filter-control';
         dateFormat="yy-mm"
         [showIcon]="true"
         [readonlyInput]="true"
-        [minDate]="minDate"
-        [maxDate]="maxDate"
         [placeholder]="placeholder"
         [attr.aria-label]="filter.label + ' ' + (placeholder || 'From')"
         (ngModelChange)="changedMin($event)">
@@ -34,8 +33,6 @@ import { BaseFilterControl } from './filter-control';
         dateFormat="yy-mm"
         [showIcon]="true"
         [readonlyInput]="true"
-        [minDate]="minDate"
-        [maxDate]="maxDate"
         [placeholder]="placeholder"
         [attr.aria-label]="filter.label + ' ' + (placeholder || 'To')"
         (ngModelChange)="changedMax($event)">
@@ -54,9 +51,6 @@ export class DateRangeControlComponent extends BaseFilterControl {
     this.maxValue = this.toDate(range.max);
   }
 
-  get minDate(): Date { return this.toDate(this.minBound) as Date; }
-  get maxDate(): Date { return this.toDate(this.maxBound) as Date; }
-
   changedMin(value: Date | null): void { this.minValue = value; this.emitRange(); }
   changedMax(value: Date | null): void { this.maxValue = value; this.emitRange(); }
 
@@ -68,12 +62,7 @@ export class DateRangeControlComponent extends BaseFilterControl {
     this.emit(range.min || range.max ? range : null);
   }
 
-  private toDate(value: unknown): Date | null {
-    if (value instanceof Date) return value;
-    if (typeof value !== 'string' && typeof value !== 'number') return null;
-    const date = new Date(value);
-    return Number.isNaN(date.getTime()) ? null : date;
-  }
+  private toDate(value: unknown): Date | null { return parseCalendarDate(value); }
 
   private toApiDate(value: Date): string {
     return `${value.getFullYear()}-${String(value.getMonth() + 1).padStart(2, '0')}-01`;
