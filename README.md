@@ -14,8 +14,13 @@ npm install
 npm start
 ```
 
-Open `http://localhost:4200`. Start the generic backend separately; the local
-default is `http://localhost:5000/api`.
+Open `http://localhost:4200`. Start the backend separately; the API origin is
+controlled by the selected Angular environment file.
+
+For the database-backed public-employment demo, seed and start the employment
+API from the backend repository, then run `npm run start:employment` here. It
+uses `http://localhost:5001/api` and renders the employment filters and facets
+from that API configuration.
 
 ## Point at another project
 
@@ -42,7 +47,9 @@ The backend must expose these generic endpoints:
 
 ```bash
 npm start                         # development server
+npm run start:employment          # frontend connected to the employment API on port 5001
 npm run build                     # production build
+npm run build:employment          # build with the employment API configuration
 npm run build -- --configuration development
 npm test                          # Karma unit tests
 npx tsc --noEmit -p tsconfig.app.json

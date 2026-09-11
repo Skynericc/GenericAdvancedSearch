@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import { forkJoin } from 'rxjs';
 import { ApiError, AppConfig, FacetsResponse, FilterValue, SearchRequest, SearchResultPage } from '../../models/search-api.models';
 import { ConfigStore } from '../../services/config.store';
@@ -18,6 +19,7 @@ export class SearchComponent implements OnInit {
     private readonly configStore: ConfigStore,
     private readonly facetStore: FacetStore,
     private readonly dialog: MatDialog,
+    @Inject(DOCUMENT) private readonly document: Document,
   ) {}
   get searchPlaceholder(): string {
     if (!this.config) return '';
@@ -57,6 +59,7 @@ export class SearchComponent implements OnInit {
   }
   search(page = 1): void {
     if (!this.config) return;
+    const isPageChange = this.results?.page !== undefined && this.results.page !== page;
     const text = this.query.trim();
     this.pageSize = this.boundedPageSize(this.pageSize);
     const body: SearchRequest = { filters: this.filterValues, page, page_size: this.pageSize };
@@ -69,7 +72,14 @@ export class SearchComponent implements OnInit {
       return;
     }
     this.error = undefined; this.loading = true;
-    this.searchService.search(body).subscribe({ next: result => { this.results = result; this.loading = false; }, error: (err: ApiError) => { this.error = err; this.loading = false; } });
+    this.searchService.search(body).subscribe({
+      next: result => {
+        this.results = result;
+        this.loading = false;
+        if (isPageChange) window.setTimeout(() => this.focusFirstResult(), 0);
+      },
+      error: (err: ApiError) => { this.error = err; this.loading = false; }
+    });
   }
   reset(): void {
     const wasVisible = this.showFilters;
@@ -101,6 +111,12 @@ export class SearchComponent implements OnInit {
     });
   }
   private applyDefaults(): void { if (this.config) for (const f of this.config.filters) if (f.default !== null && f.default !== undefined) this.filterValues[f.name] = f.default as FilterValue; }
+  private focusFirstResult(): void {
+    const firstResult = this.document.getElementById('first-result');
+    if (!firstResult) return;
+    firstResult.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    firstResult.focus({ preventScroll: true });
+  }
   private boundedPageSize(value: number): number {
     const max = this.config?.pagination.max_page_size || 1;
     return Math.min(Math.max(Math.floor(Number(value)) || 1, 1), max);

@@ -59,6 +59,8 @@ export interface FrontendLabels {
   empty_state: string;
   previous: string;
   next: string;
+  page?: string;
+  results_per_page?: string;
   semantic_search?: string;
   semantic_search_hint?: string;
   semantic_search_placeholder?: string;

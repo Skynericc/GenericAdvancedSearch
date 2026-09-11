@@ -30,6 +30,21 @@ const ARABIC_FIELD_LABELS: Record<string, string> = {
   subjects: 'الموضوعات',
   source_file: 'الملف المصدر',
   source_page: 'الصفحة المصدر',
+  title: 'المسمى الوظيفي',
+  organization: 'المؤسسة',
+  ministry: 'الوزارة',
+  region: 'الجهة',
+  city: 'المدينة',
+  contract_type: 'نوع العقد',
+  employment_type: 'نوع التوظيف',
+  education_level: 'المستوى الدراسي',
+  grade: 'الدرجة',
+  skills: 'المهارات',
+  deadline: 'آخر أجل للترشيح',
+  salary_min: 'الحد الأدنى للأجر',
+  salary_max: 'الحد الأقصى للأجر',
+  remote: 'العمل عن بعد',
+  status: 'الحالة',
 };
 
 export function legalFieldLabel(field: string): string {

@@ -1,7 +1,12 @@
-<article class="result-card">
+<article class="result-card" dir="rtl">
   <header class="result-heading">
-    <span class="result-heading-label">الوثيقة</span>
-    <strong>{{ documentIdentifier }}</strong>
+    <div class="result-title">
+      <span class="result-heading-label">نتيجة البحث</span>
+      <strong>{{ documentIdentifier }}</strong>
+    </div>
+    <button class="header-action" type="button" *ngIf="hit.source_url || hit.document_url" (click)="openDocument()">
+      فتح الوثيقة <span aria-hidden="true">↗</span>
+    </button>
   </header>
   <dl class="metadata" *ngIf="fields.length">
     <div class="metadata-row" *ngFor="let field of fields">
@@ -10,13 +15,8 @@
     </div>
   </dl>
   <p class="source-context" *ngIf="sourceFile || sourcePage">
-    <span *ngIf="sourceFile">{{ sourceFile }}</span>
-    <span *ngIf="sourceFile && sourcePage" aria-hidden="true"> · </span>
-    <span *ngIf="sourcePage">الصفحة {{ sourcePage }}</span>
+    <span class="source-pill" *ngIf="sourceFile">{{ sourceFile }}</span>
+    <span class="source-pill" *ngIf="sourcePage">الصفحة {{ sourcePage }}</span>
   </p>
   <p class="snippet" *ngIf="hit.snippet?.text">{{ hit.snippet?.text }}</p>
-  <footer *ngIf="hit.score !== null && hit.score !== undefined || hit.source_url || hit.document_url">
-    <span *ngIf="hit.score !== null && hit.score !== undefined">التقييم: {{ hit.score | number:'1.2-2' }}</span>
-    <button type="button" *ngIf="hit.source_url || hit.document_url" (click)="openDocument()">فتح الوثيقة</button>
-  </footer>
 </article>

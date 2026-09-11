@@ -63,6 +63,20 @@
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
+            },
+            "employment": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.employment.ts"
+                }
+              ],
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
             }
           },
           "defaultConfiguration": "production"
@@ -75,6 +89,9 @@
             },
             "development": {
               "browserTarget": "doc_search:build:development"
+            },
+            "employment": {
+              "browserTarget": "doc_search:build:employment"
             }
           },
           "defaultConfiguration": "development"

@@ -44,7 +44,7 @@
       </div>
     </section>
 
-    <section class="results" *ngIf="results">
+    <section class="results" *ngIf="results" id="results">
       <div class="result-summary">
         <strong>{{ config.labels?.result_count || 'Results' }} : {{ results.total_hits }}</strong>
         <button
@@ -56,14 +56,31 @@
           <span>{{ config.labels?.export_full || 'تصدير كامل (TXT)' }}</span>
         </button>
       </div>
-      <app-result-card *ngFor="let hit of results.hits" [hit]="hit" [fields]="config.result_card_fields" (documentOpen)="openDocument($event)"></app-result-card>
+      <app-result-card *ngFor="let hit of results.hits; let i = index" [attr.id]="i === 0 ? 'first-result' : null" [attr.tabindex]="i === 0 ? '-1' : null" [hit]="hit" [fields]="config.result_card_fields" (documentOpen)="openDocument($event)"></app-result-card>
       <p class="no-results" *ngIf="!results.hits.length">{{ config.labels?.no_results || 'No results found.' }}</p>
       <nav class="pager" *ngIf="results.total_pages > 1" aria-label="Results pagination">
-        <button type="button" (click)="previous()" [disabled]="!results.has_previous">{{ config.labels?.previous || 'Previous' }}</button>
-        <span>{{ results.page }} / {{ results.total_pages }}</span>
-        <button type="button" (click)="next()" [disabled]="!results.has_next">{{ config.labels?.next || 'Next' }}</button>
-        <label for="page-size">Results per page</label>
-        <input id="page-size" name="page-size" type="number" min="1" [max]="config.pagination.max_page_size" [(ngModel)]="pageSize" (change)="search(1)">
+        <div class="pager-summary" aria-live="polite">
+          <span class="pager-summary-label">{{ config.labels?.page || 'الصفحة' }}</span>
+          <span class="pager-position" dir="ltr">
+            <strong>{{ results.page }}</strong>
+            <span aria-hidden="true">/</span>
+            <span>{{ results.total_pages }}</span>
+          </span>
+        </div>
+        <div class="pager-controls">
+          <button class="pager-button pager-previous" type="button" (click)="previous()" [disabled]="!results.has_previous">
+            <mat-icon aria-hidden="true">arrow_forward</mat-icon>
+            <span>{{ config.labels?.previous || 'السابق' }}</span>
+          </button>
+          <button class="pager-button pager-next" type="button" (click)="next()" [disabled]="!results.has_next">
+            <span>{{ config.labels?.next || 'التالي' }}</span>
+            <mat-icon aria-hidden="true">arrow_back</mat-icon>
+          </button>
+        </div>
+        <label class="page-size-control" for="page-size">
+          <span>{{ config.labels?.results_per_page || 'نتائج في الصفحة' }}</span>
+          <input id="page-size" name="page-size" type="number" min="1" [max]="config.pagination.max_page_size" [(ngModel)]="pageSize" (change)="search(1)">
+        </label>
       </nav>
     </section>
     <p class="empty-state" *ngIf="!loading && !results && !error">
