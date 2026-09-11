@@ -1,5 +1,6 @@
 import { Directive, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { FilterDefinition, FilterFacet, FilterValue } from '../../models/search-api.models';
+import { legalDisplayValue } from '../../models/legal-display';
 
 /** The deliberately small contract shared by every config-driven control. */
 export interface FilterControl {
@@ -25,4 +26,5 @@ export abstract class BaseFilterControl implements FilterControl, OnChanges {
   get placeholder(): string { return this.filter.placeholder || ''; }
   get minBound(): string | number | null { return this.facet?.min ?? null; }
   get maxBound(): string | number | null { return this.facet?.max ?? null; }
+  optionLabel(value: unknown): string { return legalDisplayValue(this.filter?.name, value); }
 }

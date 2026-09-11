@@ -22,9 +22,9 @@ describe('ResultCardComponent', () => {
   it('renders only configured metadata fields and falls back for absent values', () => {
     const element = fixture.nativeElement as HTMLElement;
     expect(element.textContent).toContain('Configured title');
-    expect(element.textContent).toContain('Document');
+    expect(element.textContent).toContain('الوثيقة');
     expect(element.textContent).toContain('bulletin.pdf');
-    expect(element.textContent).toContain('Page 3');
+    expect(element.textContent).toContain('الصفحة 3');
     expect(element.textContent).toContain('one, two');
     expect(element.textContent).toContain('—');
     expect(element.querySelectorAll('.metadata-row').length).toBe(3);

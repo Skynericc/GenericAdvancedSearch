@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { SearchHit } from '../../models/search-api.models';
+import { legalDisplayValue, legalFieldLabel } from '../../models/legal-display';
 
 @Component({ selector: 'app-result-card', templateUrl: './result-card.component.html', styleUrls: ['./result-card.component.css'] })
 export class ResultCardComponent {
@@ -17,22 +18,16 @@ export class ResultCardComponent {
     return typeof value === 'number' || typeof value === 'string' ? String(value) : null;
   }
 
+  fieldLabel(field: string): string { return legalFieldLabel(field); }
+
   valueFor(field: string): string {
     const value = this.hit?.metadata?.[field];
     if (value === null || value === undefined || value === '') return '—';
-    if (Array.isArray(value)) return value.map(item => this.displayValue(item)).join(', ') || '—';
-    return this.displayValue(value);
+    if (Array.isArray(value)) return value.map(item => legalDisplayValue(field, item)).join(', ') || '—';
+    return legalDisplayValue(field, value);
   }
 
   openDocument(): void {
     this.documentOpen.emit(this.hit.id);
-  }
-
-  private displayValue(value: unknown): string {
-    if (value === null || value === undefined || value === '') return '—';
-    if (typeof value === 'object') {
-      try { return JSON.stringify(value); } catch { return String(value); }
-    }
-    return String(value);
   }
 }
